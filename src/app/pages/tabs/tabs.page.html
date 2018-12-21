@@ -1,0 +1,40 @@
+<ion-tabs>
+
+  <ion-tab tab="my-wallet">
+    <ion-router-outlet name="my-wallet"></ion-router-outlet>
+  </ion-tab>
+  <ion-tab tab="about">
+    <ion-router-outlet name="about"></ion-router-outlet>
+  </ion-tab>
+  <ion-tab tab="contact">
+    <ion-router-outlet name="contact"></ion-router-outlet>
+  </ion-tab>
+  <ion-tab tab="setting">
+    <ion-router-outlet name="setting"></ion-router-outlet>
+  </ion-tab>
+
+  <ion-tab-bar slot="bottom">
+
+    <ion-tab-button tab="my-wallet" href="/app/tabs/(my-wallet:my-wallet)">
+      <ion-icon is-server="true" src="assets/svg/wallet-icon.svg"></ion-icon>
+      <ion-label>My Wallet</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="about" href="/app/tabs/(about:about)">
+      <ion-icon img-icon-tab src="assets/svg/address-book.svg"></ion-icon>
+      <ion-label>Address Book</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="contact" href="/app/tabs/(contact:contact)">
+      <ion-icon img-icon-tab src="assets/svg/paper-icon.svg"></ion-icon>
+      <ion-label>Transaction</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="setting" href="/app/tabs/(setting:setting)">
+      <ion-icon img-icon-tab src="assets/svg/setting.svg"></ion-icon>
+      <ion-label>Setting</ion-label>
+    </ion-tab-button>
+
+  </ion-tab-bar>
+
+</ion-tabs>

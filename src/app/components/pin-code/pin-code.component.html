@@ -1,0 +1,56 @@
+<ion-grid full-height no-padding>
+  <ion-row align-items-start >
+    <ion-col size="12">
+      <div text-center margin-vertical>
+        <ion-icon color="medium" class="pin-code" size="large" [name]="pin.length>0 ? 'radio-button-on' : 'radio-button-off'"></ion-icon>
+        <ion-icon color="medium" class="pin-code" size="large" [name]="pin.length>1 ? 'radio-button-on' : 'radio-button-off'"></ion-icon>
+        <ion-icon color="medium" class="pin-code" size="large" [name]="pin.length>2 ? 'radio-button-on' : 'radio-button-off'"></ion-icon>
+        <ion-icon color="medium" class="pin-code" size="large" [name]="pin.length>3 ? 'radio-button-on' : 'radio-button-off'"></ion-icon>
+        <ion-icon color="medium" class="pin-code" size="large" [name]="pin.length>4 ? 'radio-button-on' : 'radio-button-off'"></ion-icon>
+        <ion-icon color="medium" class="pin-code" size="large" [name]="pin.length>5 ? 'radio-button-on' : 'radio-button-off'"></ion-icon>
+      </div>
+    </ion-col>
+  </ion-row>
+  <ion-row class="key-board" align-items-end padding-horizontal>
+    <ion-col size="4" text-left>
+      <ion-button class="circle" size="large" fill="outline" (click)="handleInput('1')">1</ion-button>
+    </ion-col>
+    <ion-col size="4" text-center>
+      <ion-button class="circle" size="large" fill="outline" (click)="handleInput('2')">2</ion-button>
+    </ion-col>
+    <ion-col size="4" text-right>
+      <ion-button class="circle" size="large" fill="outline" (click)="handleInput('3')">3</ion-button>
+    </ion-col>
+    <ion-col size="4" text-left>
+      <ion-button class="circle" size="large" fill="outline" (click)="handleInput('4')">4</ion-button>
+    </ion-col>
+    <ion-col size="4" text-center>
+      <ion-button class="circle" size="large" fill="outline" (click)="handleInput('5')">5</ion-button>
+    </ion-col>
+    <ion-col size="4" text-right>
+      <ion-button class="circle" size="large" fill="outline" (click)="handleInput('6')">6</ion-button>
+    </ion-col>
+    <ion-col size="4" text-left>
+      <ion-button class="circle" size="large" fill="outline" (click)="handleInput('7')">7</ion-button>
+    </ion-col>
+    <ion-col size="4" text-center>
+      <ion-button class="circle" size="large" fill="outline" (click)="handleInput('8')">8</ion-button>
+    </ion-col>
+    <ion-col size="4" text-right>
+      <ion-button class="circle" size="large" fill="outline" (click)="handleInput('9')">9</ion-button>
+    </ion-col>
+    <ion-col size="4" text-left>
+      <ion-button class="circle" fill="outline" size="large" (click)="handleInput('clear')">
+        <ion-icon name="refresh"></ion-icon>
+      </ion-button>
+    </ion-col>
+    <ion-col size="4" text-center>
+      <ion-button class="circle" size="large" fill="outline" (click)="handleInput('0')">0</ion-button>
+    </ion-col>
+    <ion-col size="4" text-right>
+      <ion-button class="circle" fill="outline" size="large" (click)="handleInput('backspace')">
+        <ion-icon name="backspace"></ion-icon>
+      </ion-button>
+    </ion-col>
+  </ion-row>
+</ion-grid>

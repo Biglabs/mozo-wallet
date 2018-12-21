@@ -1,0 +1,28 @@
+{
+  "name": "capacitor-app",
+  "version": "1.0.0",
+  "description": "An Amazing Capacitor App",
+  "main": "index.js",
+  "scripts": {
+    "electron:start": "electron ./",
+    "build:mac": "build --mac",
+    "postinstall": "install-app-deps"
+  },
+  "dependencies": {
+    "@capacitor/electron": "^1.0.0-alpha.28",
+    "bip39": "^2.5.0",
+    "electron-is-dev": "^0.3.0",
+    "electron-settings": "^3.2.0",
+    "express": "^4.16.4"
+  },
+  "devDependencies": {
+    "electron": "^1.8.2",
+    "electron-builder": "^20.38.2"
+  },
+  "keywords": [
+    "capacitor",
+    "electron"
+  ],
+  "author": "",
+  "license": "ISC"
+}

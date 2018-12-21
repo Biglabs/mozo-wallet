@@ -1,0 +1,6 @@
+{
+  "appId": "mozocoin.io",
+  "appName": "mozo-wallet",
+  "bundledWebRuntime": true,
+  "webDir": "www"
+}

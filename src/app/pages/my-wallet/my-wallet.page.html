@@ -1,0 +1,70 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title text-center>
+      <app-logo></app-logo>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card>
+    <ion-card-header>
+      <ion-label>Total Mozo Coin</ion-label>
+      <ion-item mode="md" lines="none" no-padding>
+        <ion-icon no-stroke src="assets/svg/mozo-offchain.svg"></ion-icon>&nbsp;
+        <ion-card-title>50,000</ion-card-title>
+      </ion-item>
+      <ion-card-subtitle>₩102.230</ion-card-subtitle>
+      <p>
+        <ion-label>Wallet Address</ion-label><br />
+        <small>0x97309d360C015695cf50892f035E516ccA1898F0</small>
+      </p>
+    </ion-card-header>
+  </ion-card>
+  <ion-grid>
+    <ion-row>
+      <ion-col no-padding-top padding-start>
+        <ion-button (click)="send()" margin-end-xs large-radius expand="block">Send</ion-button>
+      </ion-col>
+      <ion-col no-padding-top padding-end>
+        <ion-button margin-start-xs large-radius expand="block">Payment Request</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-list padding-bottom padding-horizontal margin-h-xs>
+    <h6>Transaction History</h6>
+    <ion-item mode="md" no-inner-end no-padding lines="full">
+      <ion-icon size="large" slot="start" src="assets/svg/send.svg"></ion-icon>
+      <ion-label color="medium" text-wrap>
+        <h3>Received</h3>
+        <small><i>From Store - 3:00 Aug 08, 2018</i></small>
+      </ion-label>
+      <label slot="end">
+        <ion-text color="primary">+300</ion-text><br />
+        <!-- <small><i>300</i></small> -->
+      </label>
+    </ion-item>
+    <ion-item mode="md" no-inner-end no-padding lines="full">
+      <ion-icon size="large" slot="start" src="assets/svg/receive.svg"></ion-icon>
+      <ion-label color="medium" text-wrap>
+        <h3>Received</h3>
+        <small><i>From Store - 3:00 Aug 08, 2018</i></small>
+      </ion-label>
+      <label slot="end">
+        <ion-text color="primary">+300</ion-text><br />
+        <!-- <small><i>300</i></small> -->
+      </label>
+    </ion-item>
+    <ion-item mode="md" no-inner-end no-padding lines="full">
+      <ion-icon size="large" slot="start" src="assets/svg/send.svg"></ion-icon>
+      <ion-label color="medium" text-wrap>
+        <h3>Received</h3>
+        <small><i>From Store - 3:00 Aug 08, 2018</i></small>
+      </ion-label>
+      <label slot="end">
+        <ion-text color="primary">+300</ion-text><br />
+        <!-- <small><i>300</i></small> -->
+      </label>
+    </ion-item>
+  </ion-list>
+</ion-content>

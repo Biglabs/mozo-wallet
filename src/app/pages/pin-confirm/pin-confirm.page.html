@@ -1,0 +1,41 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button text="Back"></ion-back-button>
+        </ion-buttons>
+        <ion-title text-center>
+            <app-logo></app-logo>
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content padding>
+    <loading top="35%" *ngIf="loading; else confirmPin"></loading>
+    <ng-template #confirmPin>
+        <ion-grid full-height no-padding>
+            <ion-row full-height no-padding>
+                <ion-col height-20 size="12" text-center align-items-start>
+                    <div margin-vertical *ngIf="isPinConfirm; else pinCode">
+                        <h3 title no-margin>CONFIRM SECURITY PIN</h3>
+                        <p>Re-enter your PIN</p>
+                    </div>
+                    <ng-template #pinCode>
+                        <div margin-vertical>
+                            <h3 title no-margin>ENTER YOUR SECURITY PIN</h3>
+                            <p>Security PIN should be 6 di-git numbers</p>
+                        </div>
+                    </ng-template>
+                </ion-col>
+                <ion-col height-65 size="12" align-items-stretch>
+                    <pin-code (change)="onChange($event)"></pin-code>
+                </ion-col>
+                <ion-col height-15 size="12" align-items-end no-padding>
+                    <ion-row align-items-end full-height no-padding>
+                        <ion-col padding-bottom>
+                            <ion-button [disabled]="pin.length <= 5" (click)="continue()" align-items-end shadow expand="block">Continue</ion-button>
+                        </ion-col>
+                    </ion-row>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+    </ng-template>
+</ion-content>

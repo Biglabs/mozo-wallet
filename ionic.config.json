@@ -1,0 +1,7 @@
+{
+  "name": "mozo-wallet",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "angular"
+}

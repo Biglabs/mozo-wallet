@@ -1,0 +1,269 @@
+// http://ionicframework.com/docs/theming/
+
+@import '~@ionic/angular/css/core.css';
+@import '~@ionic/angular/css/normalize.css';
+@import '~@ionic/angular/css/structure.css';
+@import '~@ionic/angular/css/typography.css';
+
+@import '~@ionic/angular/css/padding.css';
+@import '~@ionic/angular/css/float-elements.css';
+@import '~@ionic/angular/css/text-alignment.css';
+@import '~@ionic/angular/css/text-transformation.css';
+@import '~@ionic/angular/css/flex-utils.css';
+
+@import '~@angular/material/theming';
+// Plus imports for other components in your app.
+
+$custom-typography: mat-typography-config(
+  $font-family: '-apple-system, BlinkMacSystemFont, "Helvetica Neue", "Roboto", sans-serif'
+);
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// **Be sure that you only ever include this mixin once!**
+@include mat-core($custom-typography);
+
+$background: #fff;
+
+
+
+$mat-blue: (50: #e3f2fd,
+100: #bbdefb,
+200: #90caf9,
+300: #64b5f6,
+400: #42a5f5,
+500: #5a9cf5,
+600: #1e88e5,
+700: #1976d2,
+800: #1565c0,
+900: #0d47a1,
+A100: #82b1ff,
+A200: #448aff,
+A400: #2979ff,
+A700: #2962ff,
+contrast: (50: $dark-primary-text,
+100: $dark-primary-text,
+200: $dark-primary-text,
+300: $dark-primary-text,
+400: $dark-primary-text,
+500: $light-primary-text,
+600: $light-primary-text,
+700: $light-primary-text,
+800: $light-primary-text,
+900: $light-primary-text,
+A100: $dark-primary-text,
+A200: $light-primary-text,
+A400: $light-primary-text,
+A700: $light-primary-text,
+));
+
+$mat-light-theme-background: (status-bar: map_get($mat-grey, 300),
+app-bar: map_get($mat-grey, 100),
+background: $background, //map_get($mat-indigo, 50),
+hover: rgba(black, 0.04), // TODO(kara): check style with Material Design UX
+card: white,
+dialog: white,
+disabled-button: $black-12-opacity,
+raised-button: white,
+focused-button: $black-6-opacity,
+selected-button: map_get($mat-grey, 300),
+selected-disabled-button: map_get($mat-grey, 400),
+disabled-button-toggle: map_get($mat-grey, 200),
+unselected-chip: map_get($mat-grey, 300),
+disabled-list-option: map_get($mat-grey, 200),
+);
+
+// Define the default theme (same as the example above).
+$candy-app-primary: mat-palette($mat-blue);
+$candy-app-accent: mat-palette($mat-blue, A200, A100, A400);
+$candy-app-theme: mat-light-theme($candy-app-primary, $candy-app-accent);
+
+// Include the default theme styles.
+@include angular-material-theme($candy-app-theme);
+
+
+// Define an alternate dark theme.
+$dark-primary: mat-palette($mat-blue-grey);
+$dark-accent: mat-palette($mat-amber, A200, A100, A400);
+$dark-warn: mat-palette($mat-deep-orange);
+$dark-theme: mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+
+// Include the alternative theme styles inside of a block with a CSS class. You can make this
+// CSS class whatever you want. In this example, any component inside of an element with
+// `.unicorn-dark-theme` will be affected by this alternate dark theme instead of the default theme.
+.unicorn-dark-theme {
+  @include angular-material-theme($dark-theme);
+}
+
+body {
+    font-size: 14px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin-top: 12px;
+}
+
+h3.title, h3.label, .sc-ion-label-ios-s h3 {
+    font-weight: 600;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+[full-height] {
+    height: 100% !important;
+}
+
+[height-10] {
+    height: 10% !important;
+}
+
+[height-15] {
+    height: 15% !important;
+}
+
+[height-20] {
+    height: 20% !important;
+}
+
+[height-30] {
+    height: 30% !important;
+}
+
+[height-35] {
+    height: 35% !important;
+}
+
+[height-40] {
+    height: 40% !important;
+}
+
+[height-45] {
+    height: 45% !important;
+}
+
+[height-60] {
+    height: 60% !important;
+}
+
+[height-65] {
+    height: 60% !important;
+}
+
+[height-70] {
+    height: 70% !important;
+}
+
+[height-75] {
+    height: 75% !important;
+}
+
+[height-85] {
+    height: 85% !important;
+}
+
+[title] {
+    font-size: 20px;
+    text-transform: uppercase;
+}
+
+[no-stroke] svg:root {
+    stroke: none !important;
+}
+
+[margin-end-xs] {
+    margin-right: 4px !important;
+}
+
+[margin-start-xs] {
+    margin-left: 4px !important;
+}
+
+[margin-h-xs] {
+    margin-left: 4px !important;
+    margin-right: 4px !important;
+}
+
+[margin-top-sm] {
+    margin-top: 8px !important;
+}
+
+[no-inner-end] {
+    --inner-padding-end: 0;
+
+    [slot=end] {
+        margin-right: 0;
+    }
+}
+
+ion-item[input-icon] {
+    ion-icon[slot=start] {
+        margin-top: 15px;
+        position: absolute;
+    }
+
+    ion-input {
+        margin-left: 60px;
+    }
+}
+
+[custom-icon] svg:root {
+    stroke: transparent;
+}
+
+[item-center] small {
+    position: relative;
+    top: -12px;
+}
+[img-icon-tab] {
+    height: 23px;
+    margin: 8px 0 3px;
+}
+
+
+:root {
+
+    ion-content {
+        .inner-scroll {
+            &::-webkit-scrollbar {
+                width: 5px;
+            }
+        }
+    }
+
+    [shadow]:not(.button-disabled) {
+        position: relative;
+
+        &:after {
+            content: "";
+            width: 80%;
+            left: 10%;
+            top: 0;
+            display: block;
+            position: absolute;
+            height: 10px;
+            border-radius: 50%;
+            box-shadow: 0px var(--height) 30px 1px var(--background);
+        }
+    }
+}
+
+.mat-form-field-appearance-legacy .mat-form-field-underline {
+    background-color: rgba(0, 0, 0, 0.09);
+}
+
+.mat-form-field-appearance-legacy .mat-form-field-infix {
+    padding: 0 0 12px 0;
+}
+
+.item-has-focus.label-floating.sc-ion-label-ios-h, .item-has-focus .label-floating.sc-ion-label-ios-h, .item-has-placeholder.label-floating.sc-ion-label-ios-h, .item-has-placeholder .label-floating.sc-ion-label-ios-h, .item-has-value.label-floating.sc-ion-label-ios-h, .item-has-value .label-floating.sc-ion-label-ios-h {
+    -webkit-transform: translateZ(0) scale(1);
+    transform: translateZ(0) scale(1);
+    font-size: 14px;
+}

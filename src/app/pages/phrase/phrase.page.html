@@ -1,0 +1,43 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text="back"></ion-back-button>
+    </ion-buttons>
+    <ion-title text-center>
+      <app-logo></app-logo>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content padding>
+  <ion-grid full-height no-padding>
+    <ion-row full-height no-padding>
+      <ion-col height-30 size="12" text-center align-items-start>
+        <div margin-vertical>
+          <h3 title no-margin>Store Recovery Phrase</h3>
+          <p>Please write it down on a paper and keep it in a safe place as you would with paper money
+          </p>
+          <p>
+            <ion-label color="danger">*If you lose your recovery phase, your wallet cannot be recovered.
+            </ion-label>
+          </p>
+        </div>
+      </ion-col>
+      <ion-col class="phrase-content" text-center height-30 size="12" align-items-stretch padding-end>
+        write down paper and keep safe place you would with paper money
+      </ion-col>
+      <ion-col height-40 size="12" align-items-end no-padding>
+        <ion-row align-items-end full-height no-padding>
+          <ion-col padding-bottom>
+            <div [class]="isConfirmed?'primary':'medium'">
+              <ion-button (click)="confirmStoredPhrase()" no-background-btn expand="block" fill="outline" margin-bottom>
+                <ion-checkbox [checked]="isConfirmed"></ion-checkbox>
+                &nbsp;&nbsp; <small><i>I have safely stored recovery phrase</i></small>
+              </ion-button>
+            </div>
+            <ion-button [disabled]="!isConfirmed" (click)="continue()" align-items-end shadow expand="block">Continue</ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
