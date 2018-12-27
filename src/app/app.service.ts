@@ -8,20 +8,50 @@ import { Observable } from 'rxjs';
 })
 export class AppService {
 
-  private url : string;
+  private url: string;
   constructor(private http: HttpClient) {
     this.url = window.location.origin + '/app';
   }
 
-  public getSetting(params: any = []): Observable<HttpResponse<any>> {
-    return this.http.get<any>(`${this.url}/setting`, { params: params, observe: 'response' });
+  public async getSetting(params: any = []): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      this.http.get<any>(`${this.url}/setting`, { params: params, observe: 'response' })
+          .subscribe((res: HttpResponse<any>) => {
+            let data = res.body["data"] || null
+            resolve(data);
+
+          }, (error) => {
+            reject(error);
+          })
+    });
+
   }
 
-  public deleteSetting(params: any = []): Observable<HttpResponse<any>> {
-    return this.http.delete<any>(`${this.url}/setting`, { params: params, observe: 'response' });
+  public async deleteSetting(params: any = []): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      this.http.delete<any>(`${this.url}/setting`, { params: params, observe: 'response' })
+          .subscribe((res: HttpResponse<any>) => {
+            let data = res.body["data"] || null
+            resolve(data);
+
+          }, (error) => {
+            reject(error);
+          })
+    });
   }
 
-  public addSetting(data): Observable<HttpResponse<any>> {
-    return this.http.post<any>(`${this.url}/setting`, data , { observe: 'response' });
+  public async addSetting(data): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+        this.http.post<any>(`${this.url}/setting`, data, { observe: 'response' })
+            .subscribe((res: HttpResponse<any>) => {
+              let data = res.body["data"] || null
+              resolve(data);
+
+            }, (error) => {
+              reject(error);
+            })
+      });
   }
+
+  
 }

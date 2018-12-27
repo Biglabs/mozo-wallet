@@ -1,5 +1,4 @@
 import { KeycloakService, KeycloakEvent, KeycloakInitOptions } from 'keycloak-angular';
-import { HttpResponse } from "@angular/common/http";
 //import { Plugins } from '@capacitor/core';
 
 //const { Storage } = Plugins;
@@ -41,16 +40,13 @@ export function initializer(
           resolve();
         }
 
-        await appService.getSetting(['token', 'refreshToken']).subscribe((res: HttpResponse<any>) => {
-          let data = res.body["data"] || null
+        await appService.getSetting(['token', 'refreshToken']).then((data) => {
           if(data) {
             initKeycloak(data["token"], data["refreshToken"])
           } else {
             initKeycloak(null, null)
           }
-          
         }, (error) => {
-          console.log(error)
           initKeycloak(null, null)
         })
 

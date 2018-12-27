@@ -5,6 +5,7 @@ import { SendPage } from './send.page';
 import { ComponentsModule } from '../../components/components.module'
 //import { SendConfirmPage } from '../send-confirm/send-confirm.page';
 import { SendPinConfirmPage } from '../send-pin-confirm/send-pin-confirm.page';
+import { SaveAddressPage } from '../save-address/save-address.page';
 import {MatSelectModule, MatAutocompleteModule, MatInputModule, MatFormFieldModule} from '@angular/material';
 
 @NgModule({
@@ -20,10 +21,12 @@ import {MatSelectModule, MatAutocompleteModule, MatInputModule, MatFormFieldModu
   ],
   declarations: [
     SendPage,
-    SendPinConfirmPage
+    SendPinConfirmPage,
+    SaveAddressPage
   ],
   entryComponents: [
-    SendPinConfirmPage
+    SendPinConfirmPage,
+    SaveAddressPage
   ]
 })
 export class SendPageModule { }

@@ -7,7 +7,7 @@
         "ng": "ng",
         "start": "ng serve",
         "build": "ng build --prod",
-        "build:desktop": "ng build --prod --base-href=./ && npx cap copy electron",
+        "build:desktop": "ng build --base-href=./ && npx cap copy electron",
         "test": "ng test",
         "lint": "ng lint",
         "e2e": "ng e2e",
@@ -51,6 +51,8 @@
         "js-sha512": "^0.8.0",
         "keycloak-angular": "^6.0.0",
         "rxjs": "~6.3.3",
+        "sjcl": "^1.0.8",
+        "web3": "^1.0.0-beta.37",
         "zone.js": "~0.8.26"
     },
     "devDependencies": {

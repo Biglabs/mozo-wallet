@@ -40,67 +40,49 @@ export class AppComponent {
     this.platform.ready().then(() => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
-      this.keycloakService.isLoggedIn().then((result) => {
+      this.keycloakService.isLoggedIn().then( async (result) => {
+        console.log("result", result)
         if (!result) {
           this.onLogin()
         } else {
           if (this.keycloakService["_instance"]) {
-            this.appService.addSetting({
+            await this.appService.addSetting({
               token: this.keycloakService["_instance"]["token"],
               refreshToken: this.keycloakService["_instance"]["refreshToken"]
-            }).subscribe((res: HttpResponse<any>) => {
-              const data = res.body;
-              console.log(res)
+            }).then((data) => {
+              console.log(data)
+            }, (error) => {
+              console.log(error)
             })
-
           }
 
           this.mozoService.getUserProfile().subscribe((res: HttpResponse<any>) => {
             const data = res.body;
-            console.log("electron", res.body.walletInfo.encryptSeedPhrase)
-            console.log("ios", this.platform.platforms())
-
-
-            // let generateAddressAtIndex = (wallet, addressIndex) => {
-            //   try {
-            //     let userWallet = wallet.derive(addressIndex);
-            //     var address = "";
-            //     var privkey = "";
-            //     var keyPair = userWallet.keyPair;
-
-            //     var privKeyBuffer = keyPair.d.toBuffer(32);
-            //     privkey = privKeyBuffer.toString('hex');
-            //     var addressBuffer = ethUtil.privateToAddress(privKeyBuffer);
-            //     var hexAddress = addressBuffer.toString('hex');
-            //     var checksumAddress = ethUtil.toChecksumAddress(hexAddress);
-            //     address = ethUtil.addHexPrefix(checksumAddress);
-            //     privkey = ethUtil.addHexPrefix(privkey);
-
-            //     return { address: address, addressIndex: addressIndex, privkey: privkey };
-                
-            //   } catch (error) {
-            //     console.error(error);
-            //   }
-            //   return null;
-            // }
-
-
-            // let generateWallets = (mnemonic) => {
-            //   let seed = bip39.mnemonicToSeedHex(mnemonic);
-            //   let rootKey = Bitcoin.HDNode.fromSeedHex(seed);
-            //   let path = "m/44'/60'/0'/0";
-            //   let wallet = rootKey.derivePath(path);
-            //   return wallet
-            // }
+            
             if (data["walletInfo"]) {
-              this.appGlobals.saveEncryptSeedWord(data.walletInfo.encryptSeedPhrase)
-              //this.router.navigateByUrl("/pin-confirm")
-              this.router.navigateByUrl("/app/tabs/(my-wallet:my-wallet)")
+              this.appGlobals.saveEncryptSeedWord(data.walletInfo.encryptSeedPhrase);
+
+              console.log("user", data)
+
+              this.appService.getSetting(['Address']).then((data) => {
+                console.log("data", data)
+                if(data["Address"]) {
+                  this.appGlobals.address = data["Address"]["address"]
+                  this.router.navigateByUrl("/app/tabs/(my-wallet:my-wallet)")
+                } else {
+                  this.router.navigateByUrl("/pin-confirm")
+                }
+              }, (error) => {
+                this.router.navigateByUrl("/pin-confirm")
+              })
+             
             } else {
-              //this.router.navigateByUrl("/phrase")
-              this.router.navigateByUrl("/app/tabs/(my-wallet:my-wallet)")
+              this.router.navigateByUrl("/phrase")
             }
 
+          }, (error) => {
+              console.log("error", error)
+              this.onLogout()
           })
         }
       })
@@ -114,8 +96,8 @@ export class AppComponent {
   }
 
   onLogout(): void {
-    this.appService.deleteSetting(['token', 'refreshToken']).subscribe((res: HttpResponse<any>) => {
-      console.log(res)
+    this.appService.deleteSetting(['token', 'refreshToken', 'Address']).then((data) => {
+      console.log(data)
       this.keycloakService.logout(window.location.origin);
     }, (error) => {
       console.log(error)

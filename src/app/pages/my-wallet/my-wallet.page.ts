@@ -1,6 +1,9 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit, AfterViewInit} from '@angular/core';
 import { NavController, ModalController } from '@ionic/angular';
+import { HttpResponse } from "@angular/common/http";
 import { SendConfirmPage } from '../send-confirm/send-confirm.page';
+import { MozoService } from '../../services/mozo.service'
+import { AppGlobals } from '../../app.globals'
 
 @Component({
   selector: 'app-my-wallet',
@@ -8,12 +11,15 @@ import { SendConfirmPage } from '../send-confirm/send-confirm.page';
   styleUrls: ['my-wallet.page.scss']
 })
 export class MyWalletPage implements OnInit {
+  address: string = null
+  balance: number = 0
   constructor(
     private nav: NavController,
+    private mozoService: MozoService,
+    private appGlobals: AppGlobals,
     public modalController: ModalController
   ) {
-   
-    //this.openSendConfirm()
+    console.log("my wallet 3")
   }
 
   async openSendConfirm() {
@@ -28,7 +34,23 @@ export class MyWalletPage implements OnInit {
     this.nav.navigateForward("/send")
   }
 
+  ngAfterViewInit() {
+    console.log("my wallet 2")
+  }
+
   ngOnInit() {
-    //this.openSendConfirm()
+    console.log("my wallet")
+    this.address = this.appGlobals.address
+    this.mozoService.getBalance(this.address).subscribe((res: HttpResponse<any>) => {
+      const data = res.body;
+      if(data) {
+        this.balance = data['balance'] / 100
+      }
+      
+      console.log("data balance ", data)
+
+    }, (error) => {
+       
+    })
   }
 }

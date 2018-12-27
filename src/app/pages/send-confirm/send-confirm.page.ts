@@ -1,6 +1,7 @@
 import { Component} from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import {SendPinConfirmPage} from '../send-pin-confirm/send-pin-confirm.page'
+import { AppGlobals } from '../../app.globals'
 
 @Component({
   selector: 'send-confirm-mozo',
@@ -8,10 +9,14 @@ import {SendPinConfirmPage} from '../send-pin-confirm/send-pin-confirm.page'
   styleUrls: ['send-confirm.page.scss']
 })
 export class SendConfirmPage {
+  toAddress: string = ""
+  amount: number = 0
   constructor(
-    public modalController: ModalController
+    public modalController: ModalController,
+    private appGlobals: AppGlobals
   ) { 
-    
+    this.toAddress = this.appGlobals.txData.params.to
+    this.amount = this.appGlobals.txData.params.value
   }
 
   async continue() {
@@ -23,7 +28,6 @@ export class SendConfirmPage {
   }
 
   dismiss(data?: any) {
-    
     this.modalController.dismiss(data);
   }
 }

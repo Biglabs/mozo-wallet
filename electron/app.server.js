@@ -16,6 +16,8 @@ const createServer = () => {
     }
   }
 
+  //settings.deleteAll()
+
   serverApp.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers",
@@ -48,8 +50,7 @@ const createServer = () => {
       Object.keys(data).forEach(function (key) {
         result[data[key]] = settings.get(data[key]) || null
       });
-
-      console.log("result", result)
+      
       res.send(resData.call(
         result
       ));
@@ -84,6 +85,7 @@ const createServer = () => {
 
   serverApp.post('/app/setting', (req, res) => {
     let data = req.body
+    console.log(req.headers.authorization)
     if (typeof data === 'object') {
       Object.keys(data).forEach(function (key) {
         settings.set(key, data[key]);

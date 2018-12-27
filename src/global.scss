@@ -14,8 +14,7 @@
 @import '~@angular/material/theming';
 // Plus imports for other components in your app.
 
-$custom-typography: mat-typography-config(
-  $font-family: '-apple-system, BlinkMacSystemFont, "Helvetica Neue", "Roboto", sans-serif'
+$custom-typography: mat-typography-config($font-family: '-apple-system, BlinkMacSystemFont, "Helvetica Neue", "Roboto", sans-serif'
 );
 
 // Include the common styles for Angular Material. We include this here so that you only
@@ -92,11 +91,11 @@ $dark-theme: mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
 // CSS class whatever you want. In this example, any component inside of an element with
 // `.unicorn-dark-theme` will be affected by this alternate dark theme instead of the default theme.
 .unicorn-dark-theme {
-  @include angular-material-theme($dark-theme);
+    @include angular-material-theme($dark-theme);
 }
 
 body {
-    font-size: 14px;
+    font-size: 13px;
 }
 
 h1,
@@ -108,7 +107,9 @@ h6 {
     margin-top: 12px;
 }
 
-h3.title, h3.label, .sc-ion-label-ios-s h3 {
+h3.title,
+h3.label,
+.sc-ion-label-ios-s h3 {
     font-weight: 600;
 }
 
@@ -221,6 +222,7 @@ ion-item[input-icon] {
     position: relative;
     top: -12px;
 }
+
 [img-icon-tab] {
     height: 23px;
     margin: 8px 0 3px;
@@ -262,8 +264,34 @@ ion-item[input-icon] {
     padding: 0 0 12px 0;
 }
 
-.item-has-focus.label-floating.sc-ion-label-ios-h, .item-has-focus .label-floating.sc-ion-label-ios-h, .item-has-placeholder.label-floating.sc-ion-label-ios-h, .item-has-placeholder .label-floating.sc-ion-label-ios-h, .item-has-value.label-floating.sc-ion-label-ios-h, .item-has-value .label-floating.sc-ion-label-ios-h {
+.item-has-focus.label-floating.sc-ion-label-ios-h,
+.item-has-focus .label-floating.sc-ion-label-ios-h,
+.item-has-placeholder.label-floating.sc-ion-label-ios-h,
+.item-has-placeholder .label-floating.sc-ion-label-ios-h,
+.item-has-value.label-floating.sc-ion-label-ios-h,
+.item-has-value .label-floating.sc-ion-label-ios-h {
     -webkit-transform: translateZ(0) scale(1);
     transform: translateZ(0) scale(1);
-    font-size: 14px;
+    font-size: 13px;
 }
+
+.multi-line {
+    .mat-option {
+        line-height: 20px;
+        height: auto;
+        padding: 0 10px;
+
+        .mat-option-text {
+            padding: 8px 0;
+            border-bottom: 0.55px solid var(--ion-toolbar-border-color, var(--ion-border-color, rgba(0, 0, 0, 0.2)));
+        }
+
+        &:last-child {
+            .mat-option-text {
+                border-bottom: none;
+            }
+        }
+    }
+
+}
+

@@ -9,36 +9,44 @@
   </ion-toolbar>
 </ion-header>
 <ion-content padding>
-  <ion-grid full-height no-padding>
-    <ion-row full-height no-padding>
-      <ion-col height-85 size="12" align-items-start>
-        <ion-list>
-          <ion-label position="floating">Receiver Address</ion-label>
-          <mat-form-field floatLabel='always' class="full-width">
-            <mat-label hidden></mat-label>
-            <input type="text" placeholder="Enter receiver wallet address or Mozo ID" matInput [formControl]="myControl"
-              [matAutocomplete]="auto">
-            <mat-autocomplete #auto="matAutocomplete">
-              <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-                {{option}}
-              </mat-option>
-            </mat-autocomplete>
-          </mat-form-field>
-          <ion-item mode="md" input-icon lines="full" no-padding>
-            <ion-label position="floating">Amount</ion-label>
-            <ion-icon slot="start" src="assets/svg/mozo-offchain.svg"></ion-icon>
-            <ion-input placeholder="Enter amount to send">
-            </ion-input>
-          </ion-item>
-        </ion-list>
-      </ion-col>
-      <ion-col height-15 size="12" align-items-end no-padding>
-        <ion-row align-items-end full-height no-padding>
-          <ion-col padding-bottom>
-            <ion-button (click)="continue()" align-items-end shadow expand="block">Continue</ion-button>
+  <form full-height [(formGroup)]="formModel" (ngSubmit)="onSubmit()">
+    <ion-grid full-height no-padding>
+      <ion-row full-height no-padding>
+        <ion-col height-85 size="12" align-items-start>
+          <ion-list>
+            <ion-label position="floating">Receiver Address</ion-label>
+            <mat-form-field floatLabel='always' class="full-width">
+              <mat-label hidden></mat-label>
+              <input placeholder="Enter receiver wallet address or Mozo ID"
+                type="text" matInput formControlName="toAddress"
+                [matAutocomplete]="auto">
+              <mat-autocomplete class="multi-line" #auto="matAutocomplete">
+                <mat-option *ngFor="let option of filteredOptions | async"
+                  [value]="option.soloAddress">
+                  <label>{{option.name}}<br/>
+                      <ion-text color="medium"><small>{{option.soloAddress}}</small></ion-text>
+                    </label>
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+              <ion-item mode="md" input-icon lines="full" no-padding>
+                <ion-label position="floating">Amount</ion-label>
+                <ion-icon slot="start" src="assets/svg/mozo-offchain.svg"></ion-icon>
+                <ion-input type="number" formControlName="amount"
+                  placeholder="Enter amount to send">
+                </ion-input>
+              </ion-item>
+            </ion-list>
+          </ion-col>
+          <ion-col height-15 size="12" align-items-end no-padding>
+            <ion-row align-items-end full-height no-padding>
+              <ion-col padding-bottom>
+                <ion-button [disabled]="!formModel.valid" type="submit"
+                  align-items-end shadow expand="block">Continue</ion-button>
+              </ion-col>
+            </ion-row>
           </ion-col>
         </ion-row>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
-</ion-content>
+      </ion-grid>
+    </form>
+  </ion-content>

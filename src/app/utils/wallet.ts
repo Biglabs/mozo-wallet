@@ -2,10 +2,11 @@
 import bip39 from 'bip39'
 import Bitcoin from 'bitcoinjs-lib'
 import ethUtil from 'ethereumjs-util';
+import * as encryption from '../helpers/EncryptionUtils';
 
 export class Wallet {
 
-    constructor() {}
+    constructor() { }
 
     /**
      * Returns an account's address based on a specified coin type.
@@ -52,4 +53,32 @@ export class Wallet {
         let wallet = rootKey.derivePath(path);
         return wallet
     }
+
+    /**
+     * Return a list of keypair (wallet) following a list of coin type.
+     * A mnemonic string will be used in this process and stored to local db in encryption for backup purpose.
+     * @param {String} importedPhrase
+     * @param {String} pin
+     * @return {Array}
+     */
+    public createNewWallet(importedPhrase, pin, mustSave) {
+        let mnemonic = importedPhrase ||
+            bip39.generateMnemonic(128, null, bip39.wordlists.english);
+        if (mustSave) {
+            // Save PIN and mnemonic
+            let encryptedMnemonic = encryption.encrypt(mnemonic, pin);
+        }
+        let wallets = this.generateWallets(mnemonic);
+        return wallets;
+    }
+
+    /**
+     * Return a mnemonic string.
+     * @return String
+     */
+    public generateMnemonic() {
+        let mnemonic = bip39.generateMnemonic(128, null, bip39.wordlists.english);
+        return mnemonic;
+    }
+
 }

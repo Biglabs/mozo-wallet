@@ -1,8 +1,11 @@
 import { Component } from '@angular/core';
 import { NavController } from '@ionic/angular';
+import { HttpResponse } from "@angular/common/http";
 // import { HttpResponse } from "@angular/common/http";
 // import { KeycloakService } from 'keycloak-angular';
 import { AppGlobals } from '../../app.globals'
+import { MozoService } from '../../services/mozo.service'
+import { AppService } from '../../app.service'
 import Utils from '../../utils'
 
 @Component({
@@ -18,7 +21,9 @@ export class PinConfirmPage {
 
   constructor(
     private appGlobals: AppGlobals,
-    private nav: NavController
+    private nav: NavController,
+    private mozoService: MozoService,
+    private appService: AppService,
   ) {
     if (this.appGlobals.encryptSeedWord) {
       this.isPinConfirm = false
@@ -32,17 +37,57 @@ export class PinConfirmPage {
 
   continue() {
     this.loading = true
-    if (this.appGlobals.encryptSeedWord && this.pin.length > 0) {
-      let mnemonic = Utils.encryption.decrypt(this.appGlobals.encryptSeedWord, this.pin)
-      console.log(mnemonic)
-
-      let priKey = Utils.wallet.generateWallets(mnemonic)
-
-      let address = Utils.wallet.generateAddressAtIndex(priKey, 0)
-
-      if(address) {
-        this.nav.navigateRoot('/app/tabs/(my-wallet:my-wallet)')
+    if (this.pin.length > 0) {
+      let mnemonic = this.appGlobals.seedWord
+      if (this.appGlobals.encryptSeedWord) {
+        mnemonic = Utils.encryption.decrypt(this.appGlobals.encryptSeedWord, this.pin)
       }
+
+      console.log("mnemonic", mnemonic)
+
+
+      let wallet = Utils.wallet.generateWallets(mnemonic)
+
+      let address = Utils.wallet.generateAddressAtIndex(wallet, 0)
+      
+
+      if (address) {
+        address['privkey'] = Utils.encryption.encrypt(address['privkey'], this.pin)
+
+        console.log("address", address)   
+           
+        let saveAddress = () => {
+          this.appGlobals.address = address.address
+          this.appService.addSetting({
+            "Address": address
+          }).then((data) => {
+            console.log(data)
+          }, (error) => {
+            console.log(error)
+          })
+        }
+
+        if (this.appGlobals.seedWord) {
+          let repData = {
+            encryptSeedPhrase: Utils.encryption.encrypt(mnemonic, this.pin),
+            offchainAddress: address.address
+          };
+          this.mozoService.updateWalletInfo(repData).subscribe((res: HttpResponse<any>) => {
+            const data = res.body;
+
+            console.log("user", data)
+            saveAddress()
+            this.nav.navigateRoot('/app/tabs/(my-wallet:my-wallet)')
+
+          }, (error) => {
+            console.log("error", error)
+          })
+        } else {
+          saveAddress()
+          this.nav.navigateRoot('/app/tabs/(my-wallet:my-wallet)')
+        }
+      }
+
     }
 
   }

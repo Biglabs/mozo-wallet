@@ -4,7 +4,10 @@ import { Events } from '@ionic/angular';
 @Injectable()
 export class AppGlobals {
   userInfo: any = null;
-  encryptSeedWord: string = null
+  encryptSeedWord: string = null;
+  seedWord: string = null;
+  address: string = null;
+  txData : any = null;
 
   constructor(
     public events: Events

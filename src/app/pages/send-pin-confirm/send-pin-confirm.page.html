@@ -4,7 +4,7 @@
             <app-logo></app-logo>
         </ion-title>
         <ion-buttons slot="end">
-            <ion-button (click)="dismiss()">Cancel</ion-button>
+            <ion-button (click)="dismiss()">{{!isSending? "Cancel" : "Close"}}</ion-button>
         </ion-buttons>
     </ion-toolbar>
 </ion-header>
@@ -45,7 +45,7 @@
                 <ion-col padding-top margin-top-sm height-65 size="12" text-center align-items-stretch>
                     <ion-label>TX Hash:</ion-label>
                     <div margin-top-sm>
-                        <ion-label color="primary"><small size-md>0x97309d360C015695cf50892f035E516ccA1898F0</small></ion-label>
+                        <ion-label color="primary"><small size-md>{{txHash}}</small></ion-label>
                     </div>
                     <div *ngIf="status==='pending'" padding item-center>
                         <ion-icon margin-top custom-icon size="large" src="assets/svg/loading.svg"></ion-icon>
@@ -67,9 +67,9 @@
                                 <ion-icon src="assets/svg/paper-icon.svg"></ion-icon>&nbsp;
                                 View Transaction Detail
                             </ion-button>
-                            <ion-button fill="outline" large-radius expand="block">
+                            <ion-button (click)="showSaveAddress()" fill="outline" large-radius expand="block">
                                 <ion-icon name="md-person-add"></ion-icon>&nbsp;
-                                View Transaction Detail
+                                Save Wallet Address
                             </ion-button>
                         </ion-col>
                     </ion-row>

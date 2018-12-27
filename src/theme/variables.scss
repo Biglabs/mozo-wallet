@@ -146,12 +146,12 @@ small[size-md] {
 }
 
 ion-button:not(.circle) {
-  font-size: 14px;
+  font-size: 13px;
   --height: 44px;
 }
 
 ion-input {
-  font-size: 14px;
+  font-size: 13px;
 }
 
 ion-toolbar {
@@ -163,4 +163,15 @@ ion-toolbar {
     min-height: 50px;
   }
 
+}
+
+.custom-loading {
+  --color: #4e94f3;
+  ion-backdrop {
+    opacity: 0.1 !important;
+  }
+
+  .loading-wrapper {
+    background-color: transparent;
+  }
 }

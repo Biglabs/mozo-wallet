@@ -23,12 +23,12 @@
           </ion-item>
           <ion-item mode="md" lines="full" no-padding>
             <ion-label position="floating">Receiver Address</ion-label>
-            <ion-input placeholder="Enter receiver wallet address or Mozo ID"></ion-input>
+            <ion-input readonly [value]="toAddress" placeholder="Enter receiver wallet address or Mozo ID"></ion-input>
           </ion-item>
           <ion-item mode="md" input-icon lines="full" no-padding>
             <ion-label position="floating">Amount</ion-label>
             <ion-icon slot="start" src="assets/svg/mozo-offchain.svg"></ion-icon>
-            <ion-input placeholder="Enter amount to send">
+            <ion-input readonly [value]="amount" placeholder="Enter amount to send">
             </ion-input>
           </ion-item>
         </ion-list>
