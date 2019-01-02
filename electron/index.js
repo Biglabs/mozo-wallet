@@ -83,9 +83,12 @@ const {
   protocol
 } = require('electron');
 const isDevMode = require('electron-is-dev');
-const { CapacitorSplashScreen } = require('./capacitor-custom.js');
+const {
+  CapacitorSplashScreen
+} = require('./capacitor-custom.js');
 
-let appServer = require('./app.server')
+let appServer = require('./servers/app.server')
+let publicServer = require('./servers/public.server')
 
 const PROTOCOL_PREFIX = 'mozox'
 
@@ -135,6 +138,20 @@ const menuTemplateProd = [{
       accelerator: "CmdOrCtrl+V",
       selector: "paste:"
     },
+    {
+      label: 'Show App',
+      click: function () {
+        mainWindow.show();
+        mainWindow.focus();
+      }
+    },
+    {
+      label: 'Quit',
+      click: function () {
+        application.isQuiting = true;
+        application.quit();
+      }
+    }
   ],
 }];
 
@@ -185,16 +202,17 @@ async function createWindow() {
     webPreferences: {
       webSecurity: false
     },
-    minWidth: 320,
-    minHeight: 568,
-    maxWidth: 410,
+    minWidth: 375,
+    minHeight: 667,
+    maxWidth: 375,
     width: 375,
-    height: 667,
+    height: 730,
     show: false,
     /* width: 1024,
     height: 768,
     show: false */
   });
+
 
   protocol.registerHttpProtocol(PROTOCOL_PREFIX, (req, cb) => {
     handleDeepLinkURL(req.url);
@@ -231,7 +249,7 @@ async function createWindow() {
     imageFileName: 'mozox.svg',
     loadingText: " ",
     windowWidth: 375,
-    windowHeight: 667,
+    windowHeight: 730,
     transparentWindow: false,
     callBackInit: () => {
       mainWindow.loadURL(`http://localhost:${appServer.port}/`);
@@ -292,9 +310,11 @@ async function createWindow() {
   // mainWindow.loadURL(await injectCapacitor(`file://${__dirname}/app/index.html`), {
   //   baseURLForDataURL: `file://${__dirname}/app/`
   // });
-  // mainWindow.webContents.on('dom-ready', () => {
-  //   mainWindow.show();
-  // });
+  mainWindow.webContents.on('dom-ready', () => {
+    publicServer.start.call({
+      mainWindow: mainWindow
+    })
+  });
 
 }
 
@@ -315,6 +335,25 @@ app.on('ready', () => {
   }
 });
 
+app.on('open-url', function (event, url) {
+  event.preventDefault();
+  //createWindow();
+  //dialog.showErrorBox('Welcome Back', `You arrived from: ${url}`);
+  //deeplinkingUrl = url;
+  console.log("open-url", url);
+  if (url.indexOf('close') >= 0) {
+    console.log("close", url);
+    app.hide();
+  } else {
+    console.log("open", url);
+    //mainWindow.loadURL(`http://localhost:${appServer.port}#sssss`);
+    mainWindow.webContents.send("test_channel", "ping")
+    mainWindow.show()
+    mainWindow.focus();
+  }
+  // console.log("in open-url handler........");
+})
+
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
@@ -330,6 +369,9 @@ app.on('activate', function () {
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) {
     createWindow();
+  } else {
+    mainWindow.show();
+    mainWindow.focus();
   }
 });
 

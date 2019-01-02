@@ -1823,9 +1823,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ionic_native_status_bar_ngx__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @ionic-native/status-bar/ngx */ "./node_modules/@ionic-native/status-bar/ngx/index.js");
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
 /* harmony import */ var keycloak_angular__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! keycloak-angular */ "./node_modules/keycloak-angular/fesm5/keycloak-angular.js");
-/* harmony import */ var _services_mozo_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./services/mozo.service */ "./src/app/services/mozo.service.ts");
-/* harmony import */ var _app_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./app.service */ "./src/app/app.service.ts");
-/* harmony import */ var _app_globals__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./app.globals */ "./src/app/app.globals.ts");
+/* harmony import */ var _pages_send_confirm_send_confirm_page__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./pages/send-confirm/send-confirm.page */ "./src/app/pages/send-confirm/send-confirm.page.ts");
+/* harmony import */ var _services_mozo_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./services/mozo.service */ "./src/app/services/mozo.service.ts");
+/* harmony import */ var _app_service__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./app.service */ "./src/app/app.service.ts");
+/* harmony import */ var _app_globals__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./app.globals */ "./src/app/app.globals.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -1878,13 +1879,13 @@ var __generator = (undefined && undefined.__generator) || function (thisArg, bod
 
 
 
+// import { Plugins, AppState } from '@capacitor/core';
+// const { App } = Plugins;
 
-// import encryption from './helpers/EncryptionUtils';
-// import bip39 from 'bip39'
-// import Bitcoin from 'bitcoinjs-lib'
-//import ethUtil from 'ethereumjs-util';
+
+
 var AppComponent = /** @class */ (function () {
-    function AppComponent(platform, splashScreen, statusBar, keycloakService, mozoService, appService, appGlobals, router) {
+    function AppComponent(platform, splashScreen, statusBar, keycloakService, mozoService, appService, appGlobals, router, modalController) {
         this.platform = platform;
         this.splashScreen = splashScreen;
         this.statusBar = statusBar;
@@ -1893,15 +1894,24 @@ var AppComponent = /** @class */ (function () {
         this.appService = appService;
         this.appGlobals = appGlobals;
         this.router = router;
+        this.modalController = modalController;
         this.initializeApp();
     }
     AppComponent.prototype.initializeApp = function () {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
             return __generator(this, function (_a) {
+                //console.log('resumed', this.platform.platforms());
                 this.platform.ready().then(function () {
                     _this.statusBar.styleDefault();
                     _this.splashScreen.hide();
+                    // this.platform.resume.subscribe((res) => {
+                    //   console.log('resumed', res);
+                    // });
+                    // App.addListener('appStateChange', (state: AppState) => {
+                    //   // state.isActive contains the active state
+                    //   console.log('App state changed. Is active?', state.isActive);
+                    // });
                     _this.keycloakService.isLoggedIn().then(function (result) { return __awaiter(_this, void 0, void 0, function () {
                         var _this = this;
                         return __generator(this, function (_a) {
@@ -1935,6 +1945,40 @@ var AppComponent = /** @class */ (function () {
                                                 if (data["Address"]) {
                                                     _this.appGlobals.address = data["Address"]["address"];
                                                     _this.router.navigateByUrl("/app/tabs/(my-wallet:my-wallet)");
+                                                    try {
+                                                        electron.ipcRenderer.on("test_channel", function (event, arg) { return __awaiter(_this, void 0, void 0, function () {
+                                                            var modal;
+                                                            return __generator(this, function (_a) {
+                                                                switch (_a.label) {
+                                                                    case 0:
+                                                                        console.log(arg); // Does not print ping
+                                                                        //this.router.navigateByUrl("/pin-confirm")
+                                                                        this.appGlobals.txData = {
+                                                                            coinType: "SOLO",
+                                                                            network: "SOLO",
+                                                                            action: "SIGN",
+                                                                            params: {
+                                                                                'from': this.appGlobals.address,
+                                                                                'to': "formValues.toAddress",
+                                                                                'value': 1,
+                                                                                'network': "SOLO"
+                                                                            },
+                                                                        };
+                                                                        return [4 /*yield*/, this.modalController.create({
+                                                                                component: _pages_send_confirm_send_confirm_page__WEBPACK_IMPORTED_MODULE_6__["SendConfirmPage"],
+                                                                                componentProps: { value: 123 }
+                                                                            })];
+                                                                    case 1:
+                                                                        modal = _a.sent();
+                                                                        return [4 /*yield*/, modal.present()];
+                                                                    case 2: return [2 /*return*/, _a.sent()];
+                                                                }
+                                                            });
+                                                        }); });
+                                                    }
+                                                    catch (error) {
+                                                        console.log("This is not a electron app");
+                                                    }
                                                 }
                                                 else {
                                                     _this.router.navigateByUrl("/pin-confirm");
@@ -1984,10 +2028,11 @@ var AppComponent = /** @class */ (function () {
             _ionic_native_splash_screen_ngx__WEBPACK_IMPORTED_MODULE_2__["SplashScreen"],
             _ionic_native_status_bar_ngx__WEBPACK_IMPORTED_MODULE_3__["StatusBar"],
             keycloak_angular__WEBPACK_IMPORTED_MODULE_5__["KeycloakService"],
-            _services_mozo_service__WEBPACK_IMPORTED_MODULE_6__["MozoService"],
-            _app_service__WEBPACK_IMPORTED_MODULE_7__["AppService"],
-            _app_globals__WEBPACK_IMPORTED_MODULE_8__["AppGlobals"],
-            _angular_router__WEBPACK_IMPORTED_MODULE_4__["Router"]])
+            _services_mozo_service__WEBPACK_IMPORTED_MODULE_7__["MozoService"],
+            _app_service__WEBPACK_IMPORTED_MODULE_8__["AppService"],
+            _app_globals__WEBPACK_IMPORTED_MODULE_9__["AppGlobals"],
+            _angular_router__WEBPACK_IMPORTED_MODULE_4__["Router"],
+            _ionic_angular__WEBPACK_IMPORTED_MODULE_1__["ModalController"]])
     ], AppComponent);
     return AppComponent;
 }());
@@ -2661,7 +2706,7 @@ var EventStackService = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var sjcl = __webpack_require__(/*! ./sjcl */ "./src/app/helpers/sjcl.js");
+var sjcl = __webpack_require__(/*! ./sjcl */ "./src/app/helpers/sjcl.js")
 var RNCryptor = __webpack_require__(/*! ./rncryptor */ "./src/app/helpers/rncryptor.js");
 
 module.exports.encrypt = function (data, password) {
@@ -2709,7 +2754,7 @@ module.exports.convertToHash = function (inputPIN){
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var sjcl = __webpack_require__(/*! ./sjcl */ "./src/app/helpers/sjcl.js");
+var sjcl = __webpack_require__(/*! ./sjcl */ "./src/app/helpers/sjcl.js")
 sjcl.beware["CBC mode is dangerous because it doesn't protect message integrity."]();
 
 var RNCryptor = {};
@@ -3127,7 +3172,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm5/forms.js");
 /* harmony import */ var _send_confirm_page__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./send-confirm.page */ "./src/app/pages/send-confirm/send-confirm.page.ts");
-/* harmony import */ var _components_components_module__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../components/components.module */ "./src/app/components/components.module.ts");
+/* harmony import */ var _send_pin_confirm_send_pin_confirm_page__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../send-pin-confirm/send-pin-confirm.page */ "./src/app/pages/send-pin-confirm/send-pin-confirm.page.ts");
+/* harmony import */ var _components_components_module__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../components/components.module */ "./src/app/components/components.module.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -3139,18 +3185,23 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 
 
+
 var SendConfirmPageModule = /** @class */ (function () {
     function SendConfirmPageModule() {
     }
     SendConfirmPageModule = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["NgModule"])({
             imports: [
-                _components_components_module__WEBPACK_IMPORTED_MODULE_4__["ComponentsModule"],
+                _components_components_module__WEBPACK_IMPORTED_MODULE_5__["ComponentsModule"],
                 _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormsModule"],
                 _angular_router__WEBPACK_IMPORTED_MODULE_0__["RouterModule"].forChild([{ path: '', component: _send_confirm_page__WEBPACK_IMPORTED_MODULE_3__["SendConfirmPage"] }])
             ],
             declarations: [
-                _send_confirm_page__WEBPACK_IMPORTED_MODULE_3__["SendConfirmPage"]
+                _send_confirm_page__WEBPACK_IMPORTED_MODULE_3__["SendConfirmPage"],
+                _send_pin_confirm_send_pin_confirm_page__WEBPACK_IMPORTED_MODULE_4__["SendPinConfirmPage"]
+            ],
+            entryComponents: [
+                _send_pin_confirm_send_pin_confirm_page__WEBPACK_IMPORTED_MODULE_4__["SendPinConfirmPage"]
             ]
         })
     ], SendConfirmPageModule);
@@ -3877,8 +3928,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Wallet", function() { return Wallet; });
 /* harmony import */ var bip39__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! bip39 */ "./node_modules/bip39/index.js");
 /* harmony import */ var bip39__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(bip39__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var bitcoinjs_lib__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bitcoinjs-lib */ "./node_modules/bitcoinjs-lib/src/index.js");
-/* harmony import */ var bitcoinjs_lib__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(bitcoinjs_lib__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var bip32__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bip32 */ "./node_modules/bip32/index.js");
+/* harmony import */ var bip32__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(bip32__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var ethereumjs_util__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ethereumjs-util */ "./node_modules/ethereumjs-util/dist/index.js");
 /* harmony import */ var ethereumjs_util__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(ethereumjs_util__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _helpers_EncryptionUtils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../helpers/EncryptionUtils */ "./src/app/helpers/EncryptionUtils.js");
@@ -3901,8 +3952,9 @@ var Wallet = /** @class */ (function () {
             var userWallet = wallet.derive(addressIndex);
             var address = "";
             var privkey = "";
-            var keyPair = userWallet.keyPair;
-            var privKeyBuffer = keyPair.d.toBuffer(32);
+            //var keyPair = userWallet.keyPair;
+            //var privKeyBuffer = keyPair.d.toBuffer(32);
+            var privKeyBuffer = userWallet.privateKey;
             privkey = privKeyBuffer.toString('hex');
             var addressBuffer = ethereumjs_util__WEBPACK_IMPORTED_MODULE_2___default.a.privateToAddress(privKeyBuffer);
             var hexAddress = addressBuffer.toString('hex');
@@ -3926,11 +3978,21 @@ var Wallet = /** @class */ (function () {
      * @return {Array} array of {KeyPair}
      */
     Wallet.prototype.generateWallets = function (mnemonic) {
-        var seed = bip39__WEBPACK_IMPORTED_MODULE_0___default.a.mnemonicToSeedHex(mnemonic);
-        var rootKey = bitcoinjs_lib__WEBPACK_IMPORTED_MODULE_1___default.a.HDNode.fromSeedHex(seed);
+        // let seed = bip39.mnemonicToSeedHex(mnemonic);
+        // //let rootKey = Bitcoin.HDNode.fromSeedHex(seed);
+        // let rootKey = bip32.fromSeed(Buffer.from(seed, 'hex'))
+        // let path = "m/44'/60'/0'/0";
+        // let wallet = rootKey.derivePath(path);
+        // return wallet
+        var seed = bip39__WEBPACK_IMPORTED_MODULE_0___default.a.mnemonicToSeed(mnemonic);
+        var root = bip32__WEBPACK_IMPORTED_MODULE_1___default.a.fromSeed(seed);
         var path = "m/44'/60'/0'/0";
-        var wallet = rootKey.derivePath(path);
+        var wallet = root.derivePath(path);
         return wallet;
+        // const { address } = bitcoin.payments.p2sh({
+        //     redeem: bitcoin.payments.p2wpkh({ pubkey: child.publicKey, network: bitcoin.networks.testnet }),
+        //     network: bitcoin.networks.testnet
+        // })
     };
     /**
      * Return a list of keypair (wallet) following a list of coin type.

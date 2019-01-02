@@ -156,7 +156,7 @@ var ContactPageModule = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<ion-header>\n  <ion-toolbar>\n    <ion-title  text-center>\n        <app-logo></app-logo>\n    </ion-title>\n  </ion-toolbar>\n</ion-header>\n\n<ion-content>\n  <ion-list>\n    <ion-list-header>\n      <ion-label>\n        Follow us on Twitter\n      </ion-label>\n    </ion-list-header>\n    <ion-item>\n      <ion-label>\n        <ion-icon name=\"logo-ionic\" slot=\"start\"></ion-icon>\n        @ionicframework\n      </ion-label>\n    </ion-item>\n  </ion-list>\n</ion-content>"
+module.exports = "<ion-header>\n  <ion-toolbar>\n    <ion-title  text-center>\n        <app-logo></app-logo>\n    </ion-title>\n  </ion-toolbar>\n</ion-header>\n\n<ion-content>\n  <ion-list>\n    <ion-list-header>\n      <ion-label>\n        Follow us on Twitter\n      </ion-label>\n    </ion-list-header>\n    <ion-item>\n      <ion-label>\n       \n      </ion-label>\n    </ion-item>\n  </ion-list>\n</ion-content>"
 
 /***/ }),
 

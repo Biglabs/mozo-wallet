@@ -5,6 +5,12 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { HttpResponse } from "@angular/common/http";
 import { Router } from '@angular/router';
 import { KeycloakService } from 'keycloak-angular';
+import { ModalController } from '@ionic/angular';
+import { SendConfirmPage } from './pages/send-confirm/send-confirm.page';
+
+// import { Plugins, AppState } from '@capacitor/core';
+
+// const { App } = Plugins;
 
 import { MozoService } from './services/mozo.service'
 import { AppService } from './app.service'
@@ -16,6 +22,8 @@ import Utils from './utils'
 // import bip39 from 'bip39'
 // import Bitcoin from 'bitcoinjs-lib'
 //import ethUtil from 'ethereumjs-util';
+
+declare let electron: any;
 
 @Component({
   selector: 'app-root',
@@ -30,17 +38,27 @@ export class AppComponent {
     private mozoService: MozoService,
     private appService: AppService,
     private appGlobals: AppGlobals,
-    private router: Router
+    private router: Router,
+    public modalController: ModalController
   ) {
     this.initializeApp();
   }
 
-
   async initializeApp() {
+    //console.log('resumed', this.platform.platforms());
+
+
     this.platform.ready().then(() => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
-      this.keycloakService.isLoggedIn().then( async (result) => {
+      // this.platform.resume.subscribe((res) => {
+      //   console.log('resumed', res);
+      // });
+      // App.addListener('appStateChange', (state: AppState) => {
+      //   // state.isActive contains the active state
+      //   console.log('App state changed. Is active?', state.isActive);
+      // });
+      this.keycloakService.isLoggedIn().then(async (result) => {
         console.log("result", result)
         if (!result) {
           this.onLogin()
@@ -58,7 +76,7 @@ export class AppComponent {
 
           this.mozoService.getUserProfile().subscribe((res: HttpResponse<any>) => {
             const data = res.body;
-            
+
             if (data["walletInfo"]) {
               this.appGlobals.saveEncryptSeedWord(data.walletInfo.encryptSeedPhrase);
 
@@ -66,23 +84,51 @@ export class AppComponent {
 
               this.appService.getSetting(['Address']).then((data) => {
                 console.log("data", data)
-                if(data["Address"]) {
+                if (data["Address"]) {
                   this.appGlobals.address = data["Address"]["address"]
                   this.router.navigateByUrl("/app/tabs/(my-wallet:my-wallet)")
+
+                  try {
+                    electron.ipcRenderer.on("test_channel", async (event, arg) => {
+                      console.log(arg); // Does not print ping
+                      //this.router.navigateByUrl("/pin-confirm")
+                     
+                      this.appGlobals.txData = {
+                        coinType: "SOLO",
+                        network: "SOLO",
+                        action: "SIGN",
+                        params: {
+                          'from': this.appGlobals.address,
+                          'to': "formValues.toAddress",
+                          'value': 1,
+                          'network': "SOLO"
+                        },
+                      };
+                      const modal = await this.modalController.create({
+                        component: SendConfirmPage,
+                        componentProps: { value: 123 }
+                      });
+                      
+                      return await modal.present();
+                    })
+                  } catch (error) {
+                    console.log("This is not a electron app")
+                  }
+
                 } else {
                   this.router.navigateByUrl("/pin-confirm")
                 }
               }, (error) => {
                 this.router.navigateByUrl("/pin-confirm")
               })
-             
+
             } else {
               this.router.navigateByUrl("/phrase")
             }
 
           }, (error) => {
-              console.log("error", error)
-              this.onLogout()
+            console.log("error", error)
+            this.onLogout()
           })
         }
       })

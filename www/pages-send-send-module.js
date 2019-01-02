@@ -58825,9 +58825,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm5/forms.js");
 /* harmony import */ var _send_page__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./send.page */ "./src/app/pages/send/send.page.ts");
 /* harmony import */ var _components_components_module__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../components/components.module */ "./src/app/components/components.module.ts");
-/* harmony import */ var _send_pin_confirm_send_pin_confirm_page__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../send-pin-confirm/send-pin-confirm.page */ "./src/app/pages/send-pin-confirm/send-pin-confirm.page.ts");
-/* harmony import */ var _save_address_save_address_page__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../save-address/save-address.page */ "./src/app/pages/save-address/save-address.page.ts");
-/* harmony import */ var _angular_material__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/material */ "./node_modules/@angular/material/esm5/material.es5.js");
+/* harmony import */ var _save_address_save_address_page__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../save-address/save-address.page */ "./src/app/pages/save-address/save-address.page.ts");
+/* harmony import */ var _angular_material__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/material */ "./node_modules/@angular/material/esm5/material.es5.js");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -58842,7 +58841,6 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 //import { SendConfirmPage } from '../send-confirm/send-confirm.page';
 
 
-
 var SendPageModule = /** @class */ (function () {
     function SendPageModule() {
     }
@@ -58851,21 +58849,19 @@ var SendPageModule = /** @class */ (function () {
             imports: [
                 _components_components_module__WEBPACK_IMPORTED_MODULE_4__["ComponentsModule"],
                 _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormsModule"],
-                _angular_material__WEBPACK_IMPORTED_MODULE_7__["MatSelectModule"],
-                _angular_material__WEBPACK_IMPORTED_MODULE_7__["MatAutocompleteModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_6__["MatSelectModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_6__["MatAutocompleteModule"],
                 _angular_forms__WEBPACK_IMPORTED_MODULE_2__["ReactiveFormsModule"],
-                _angular_material__WEBPACK_IMPORTED_MODULE_7__["MatInputModule"],
-                _angular_material__WEBPACK_IMPORTED_MODULE_7__["MatFormFieldModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_6__["MatInputModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_6__["MatFormFieldModule"],
                 _angular_router__WEBPACK_IMPORTED_MODULE_0__["RouterModule"].forChild([{ path: '', component: _send_page__WEBPACK_IMPORTED_MODULE_3__["SendPage"] }])
             ],
             declarations: [
                 _send_page__WEBPACK_IMPORTED_MODULE_3__["SendPage"],
-                _send_pin_confirm_send_pin_confirm_page__WEBPACK_IMPORTED_MODULE_5__["SendPinConfirmPage"],
-                _save_address_save_address_page__WEBPACK_IMPORTED_MODULE_6__["SaveAddressPage"]
+                _save_address_save_address_page__WEBPACK_IMPORTED_MODULE_5__["SaveAddressPage"]
             ],
             entryComponents: [
-                _send_pin_confirm_send_pin_confirm_page__WEBPACK_IMPORTED_MODULE_5__["SendPinConfirmPage"],
-                _save_address_save_address_page__WEBPACK_IMPORTED_MODULE_6__["SaveAddressPage"]
+                _save_address_save_address_page__WEBPACK_IMPORTED_MODULE_5__["SaveAddressPage"]
             ]
         })
     ], SendPageModule);

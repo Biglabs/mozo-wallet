@@ -1,4 +1,4 @@
-var sjcl = require('./sjcl');
+var sjcl = require('./sjcl')
 var RNCryptor = require('./rncryptor');
 
 module.exports.encrypt = function (data, password) {
