@@ -90,7 +90,7 @@ const {
 let appServer = require('./servers/app.server')
 let publicServer = require('./servers/public.server')
 
-const PROTOCOL_PREFIX = 'mozox'
+const PROTOCOL_PREFIX = 'solosigner'
 
 // Place holders for our windows so they don't get garbage collected.
 let mainWindow = null;
@@ -192,6 +192,14 @@ function handleDeepLinkURL(url) {
 async function createWindow() {
 
   appServer.start()
+  publicServer.start.call({
+    getWindow: () => {
+      return mainWindow
+    },
+    hideApp: () => {
+      app.hide()
+    }
+  })
 
   // userDataPath = (app || electron.remote.app).getPath('userData');
 
@@ -310,11 +318,11 @@ async function createWindow() {
   // mainWindow.loadURL(await injectCapacitor(`file://${__dirname}/app/index.html`), {
   //   baseURLForDataURL: `file://${__dirname}/app/`
   // });
-  mainWindow.webContents.on('dom-ready', () => {
-    publicServer.start.call({
-      mainWindow: mainWindow
-    })
-  });
+  // mainWindow.webContents.on('dom-ready', () => {
+  //   publicServer.start.call({
+  //     mainWindow: mainWindow
+  //   })
+  // });
 
 }
 

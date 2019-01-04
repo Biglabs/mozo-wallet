@@ -1935,6 +1935,53 @@ var AppComponent = /** @class */ (function () {
                                     _a.sent();
                                     _a.label = 3;
                                 case 3:
+                                    try {
+                                        console.log("ipcRenderer", electron.ipcRenderer);
+                                        electron.ipcRenderer.on("send-transaction", function (event, arg) { return __awaiter(_this, void 0, void 0, function () {
+                                            var modal;
+                                            return __generator(this, function (_a) {
+                                                switch (_a.label) {
+                                                    case 0:
+                                                        arg.type = "ex"; //call from external
+                                                        arg.from = this.appGlobals.address;
+                                                        this.appGlobals.txData = arg;
+                                                        return [4 /*yield*/, this.modalController.create({
+                                                                component: _pages_send_confirm_send_confirm_page__WEBPACK_IMPORTED_MODULE_6__["SendConfirmPage"],
+                                                                componentProps: { value: 123 }
+                                                            })];
+                                                    case 1:
+                                                        modal = _a.sent();
+                                                        return [4 /*yield*/, modal.present()];
+                                                    case 2: return [2 /*return*/, _a.sent()];
+                                                }
+                                            });
+                                        }); });
+                                        electron.ipcRenderer.on("get-balance", function (event, arg) { return __awaiter(_this, void 0, void 0, function () {
+                                            return __generator(this, function (_a) {
+                                                this.mozoService.getBalance(this.appGlobals.address).subscribe(function (res) {
+                                                    var data = res.body;
+                                                    electron.ipcRenderer.send("get-balance-callback", JSON.stringify(res.body));
+                                                    console.log("data balance ", data);
+                                                }, function (error) {
+                                                });
+                                                return [2 /*return*/];
+                                            });
+                                        }); });
+                                        electron.ipcRenderer.on("get-addressbook", function (event, arg) { return __awaiter(_this, void 0, void 0, function () {
+                                            return __generator(this, function (_a) {
+                                                this.mozoService.getAddressBook().subscribe(function (res) {
+                                                    var data = res.body;
+                                                    electron.ipcRenderer.send("get-addressbook-callback", JSON.stringify(res.body));
+                                                    console.log("data balance ", data);
+                                                }, function (error) {
+                                                });
+                                                return [2 /*return*/];
+                                            });
+                                        }); });
+                                    }
+                                    catch (error) {
+                                        console.log("This is not a electron app");
+                                    }
                                     this.mozoService.getUserProfile().subscribe(function (res) {
                                         var data = res.body;
                                         if (data["walletInfo"]) {
@@ -1945,40 +1992,6 @@ var AppComponent = /** @class */ (function () {
                                                 if (data["Address"]) {
                                                     _this.appGlobals.address = data["Address"]["address"];
                                                     _this.router.navigateByUrl("/app/tabs/(my-wallet:my-wallet)");
-                                                    try {
-                                                        electron.ipcRenderer.on("test_channel", function (event, arg) { return __awaiter(_this, void 0, void 0, function () {
-                                                            var modal;
-                                                            return __generator(this, function (_a) {
-                                                                switch (_a.label) {
-                                                                    case 0:
-                                                                        console.log(arg); // Does not print ping
-                                                                        //this.router.navigateByUrl("/pin-confirm")
-                                                                        this.appGlobals.txData = {
-                                                                            coinType: "SOLO",
-                                                                            network: "SOLO",
-                                                                            action: "SIGN",
-                                                                            params: {
-                                                                                'from': this.appGlobals.address,
-                                                                                'to': "formValues.toAddress",
-                                                                                'value': 1,
-                                                                                'network': "SOLO"
-                                                                            },
-                                                                        };
-                                                                        return [4 /*yield*/, this.modalController.create({
-                                                                                component: _pages_send_confirm_send_confirm_page__WEBPACK_IMPORTED_MODULE_6__["SendConfirmPage"],
-                                                                                componentProps: { value: 123 }
-                                                                            })];
-                                                                    case 1:
-                                                                        modal = _a.sent();
-                                                                        return [4 /*yield*/, modal.present()];
-                                                                    case 2: return [2 /*return*/, _a.sent()];
-                                                                }
-                                                            });
-                                                        }); });
-                                                    }
-                                                    catch (error) {
-                                                        console.log("This is not a electron app");
-                                                    }
                                                 }
                                                 else {
                                                     _this.router.navigateByUrl("/pin-confirm");
@@ -3297,13 +3310,18 @@ var __generator = (undefined && undefined.__generator) || function (thisArg, bod
 
 
 var SendConfirmPage = /** @class */ (function () {
-    function SendConfirmPage(modalController, appGlobals) {
+    function SendConfirmPage(modalController, appGlobals, events) {
+        var _this = this;
         this.modalController = modalController;
         this.appGlobals = appGlobals;
+        this.events = events;
         this.toAddress = "";
         this.amount = 0;
-        this.toAddress = this.appGlobals.txData.params.to;
-        this.amount = this.appGlobals.txData.params.value;
+        this.toAddress = this.appGlobals.txData.to;
+        this.amount = this.appGlobals.txData.value;
+        this.events.subscribe('close:txconfirm1', function () {
+            _this.dismiss();
+        });
     }
     SendConfirmPage.prototype.continue = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -3332,7 +3350,8 @@ var SendConfirmPage = /** @class */ (function () {
             styles: [__webpack_require__(/*! ./send-confirm.page.scss */ "./src/app/pages/send-confirm/send-confirm.page.scss")]
         }),
         __metadata("design:paramtypes", [_ionic_angular__WEBPACK_IMPORTED_MODULE_1__["ModalController"],
-            _app_globals__WEBPACK_IMPORTED_MODULE_3__["AppGlobals"]])
+            _app_globals__WEBPACK_IMPORTED_MODULE_3__["AppGlobals"],
+            _ionic_angular__WEBPACK_IMPORTED_MODULE_1__["Events"]])
     ], SendConfirmPage);
     return SendConfirmPage;
 }());
@@ -3432,12 +3451,14 @@ var __generator = (undefined && undefined.__generator) || function (thisArg, bod
 
 
 var SendPinConfirmPage = /** @class */ (function () {
-    function SendPinConfirmPage(appGlobals, nav, modalController, appService, mozoService) {
+    function SendPinConfirmPage(appGlobals, nav, modalController, appService, mozoService, events) {
+        var _this = this;
         this.appGlobals = appGlobals;
         this.nav = nav;
         this.modalController = modalController;
         this.appService = appService;
         this.mozoService = mozoService;
+        this.events = events;
         this.loading = false;
         this.isSending = false;
         this.pin = "";
@@ -3447,6 +3468,9 @@ var SendPinConfirmPage = /** @class */ (function () {
         // if (this.appGlobals.encryptSeedWord) {
         //   this.isSending = false
         // }
+        this.events.subscribe('close:txconfirm2', function () {
+            _this.dismiss();
+        });
     }
     SendPinConfirmPage.prototype.onChange = function (pin) {
         console.log("code", pin);
@@ -3468,7 +3492,17 @@ var SendPinConfirmPage = /** @class */ (function () {
         }
     };
     SendPinConfirmPage.prototype.dismiss = function (data) {
-        this.modalController.dismiss(data);
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.modalController.dismiss(data).then(function () {
+                            _this.events.publish('close:txconfirm1');
+                        })];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
     };
     SendPinConfirmPage.prototype.showSaveAddress = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -3493,9 +3527,9 @@ var SendPinConfirmPage = /** @class */ (function () {
             console.log("data", data);
             if (data["Address"]) {
                 var privKey_1 = _utils__WEBPACK_IMPORTED_MODULE_5__["default"].encryption.decrypt(data["Address"]["privkey"], _this.pin);
-                var txData = _this.appGlobals.txData;
-                _this.address = txData.params.to;
-                _this.mozoService.createTransaction(txData.params).subscribe(function (res) {
+                var txData_1 = _this.appGlobals.txData;
+                _this.address = txData_1.to;
+                _this.mozoService.createTransaction(txData_1).subscribe(function (res) {
                     var data = res.body;
                     if (data) {
                         var request_data = {
@@ -3509,12 +3543,31 @@ var SendPinConfirmPage = /** @class */ (function () {
                             console.log("result", result);
                             if (result) {
                                 var dataReq = JSON.parse(result);
-                                _this.mozoService.sendSignedTransaction(dataReq).subscribe(function (res) {
-                                    var data = res.body;
-                                    _this.isSending = true;
-                                    _this.txHash = data.tx.hash;
-                                    _this.getTransactionStatus(data.tx.hash);
-                                }, function (error) {
+                                _this.mozoService.sendSignedTransaction(dataReq).subscribe(function (res) { return __awaiter(_this, void 0, void 0, function () {
+                                    var data;
+                                    return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0:
+                                                data = res.body;
+                                                if (!(txData_1.type === 'ex')) return [3 /*break*/, 2];
+                                                //this.events.publish('close:txconfirm2');
+                                                return [4 /*yield*/, this.dismiss()];
+                                            case 1:
+                                                //this.events.publish('close:txconfirm2');
+                                                _a.sent();
+                                                setTimeout(function () {
+                                                    electron.ipcRenderer.send("send-transaction-callback", JSON.stringify(res.body));
+                                                }, 200);
+                                                return [3 /*break*/, 3];
+                                            case 2:
+                                                this.isSending = true;
+                                                this.txHash = data.tx.hash;
+                                                this.getTransactionStatus(data.tx.hash);
+                                                _a.label = 3;
+                                            case 3: return [2 /*return*/];
+                                        }
+                                    });
+                                }); }, function (error) {
                                 });
                             }
                         });
@@ -3557,7 +3610,8 @@ var SendPinConfirmPage = /** @class */ (function () {
             _ionic_angular__WEBPACK_IMPORTED_MODULE_1__["NavController"],
             _ionic_angular__WEBPACK_IMPORTED_MODULE_1__["ModalController"],
             _app_service__WEBPACK_IMPORTED_MODULE_3__["AppService"],
-            _services_mozo_service__WEBPACK_IMPORTED_MODULE_4__["MozoService"]])
+            _services_mozo_service__WEBPACK_IMPORTED_MODULE_4__["MozoService"],
+            _ionic_angular__WEBPACK_IMPORTED_MODULE_1__["Events"]])
     ], SendPinConfirmPage);
     return SendPinConfirmPage;
 }());

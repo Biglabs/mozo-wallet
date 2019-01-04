@@ -58984,15 +58984,10 @@ var SendPage = /** @class */ (function () {
                     case 0:
                         formValues = this.formModel.value;
                         this.appGlobals.txData = {
-                            coinType: "SOLO",
-                            network: "SOLO",
-                            action: "SIGN",
-                            params: {
-                                'from': this.appGlobals.address,
-                                'to': formValues.toAddress,
-                                'value': parseInt(formValues.amount),
-                                'network': "SOLO"
-                            },
+                            'from': this.appGlobals.address,
+                            'to': formValues.toAddress,
+                            'value': parseInt(formValues.amount),
+                            'network': "SOLO"
                         };
                         return [4 /*yield*/, this.modalController.create({
                                 component: _send_confirm_send_confirm_page__WEBPACK_IMPORTED_MODULE_2__["SendConfirmPage"],

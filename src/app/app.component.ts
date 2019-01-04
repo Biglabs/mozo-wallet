@@ -74,6 +74,47 @@ export class AppComponent {
             })
           }
 
+
+          try {
+            console.log("ipcRenderer", electron.ipcRenderer)
+            electron.ipcRenderer.on("send-transaction", async (event, arg) => {
+              arg.type = "ex" //call from external
+              arg.from = this.appGlobals.address
+
+              this.appGlobals.txData = arg;
+              const modal = await this.modalController.create({
+                component: SendConfirmPage,
+                componentProps: { value: 123 }
+              });
+
+              return await modal.present();
+            })
+
+            electron.ipcRenderer.on("get-balance", async (event, arg) => {
+              this.mozoService.getBalance(this.appGlobals.address).subscribe((res: HttpResponse<any>) => {
+                const data = res.body;
+                electron.ipcRenderer.send("get-balance-callback", JSON.stringify(res.body))
+                console.log("data balance ", data)
+          
+              }, (error) => {
+                 
+              })
+            })
+
+            electron.ipcRenderer.on("get-addressbook", async (event, arg) => {
+              this.mozoService.getAddressBook().subscribe((res: HttpResponse<any>) => {
+                const data = res.body;
+                electron.ipcRenderer.send("get-addressbook-callback", JSON.stringify(res.body))
+                console.log("data balance ", data)
+          
+              }, (error) => {
+                 
+              })
+            })
+          } catch (error) {
+            console.log("This is not a electron app")
+          }
+
           this.mozoService.getUserProfile().subscribe((res: HttpResponse<any>) => {
             const data = res.body;
 
@@ -87,33 +128,6 @@ export class AppComponent {
                 if (data["Address"]) {
                   this.appGlobals.address = data["Address"]["address"]
                   this.router.navigateByUrl("/app/tabs/(my-wallet:my-wallet)")
-
-                  try {
-                    electron.ipcRenderer.on("test_channel", async (event, arg) => {
-                      console.log(arg); // Does not print ping
-                      //this.router.navigateByUrl("/pin-confirm")
-                     
-                      this.appGlobals.txData = {
-                        coinType: "SOLO",
-                        network: "SOLO",
-                        action: "SIGN",
-                        params: {
-                          'from': this.appGlobals.address,
-                          'to': "formValues.toAddress",
-                          'value': 1,
-                          'network': "SOLO"
-                        },
-                      };
-                      const modal = await this.modalController.create({
-                        component: SendConfirmPage,
-                        componentProps: { value: 123 }
-                      });
-                      
-                      return await modal.present();
-                    })
-                  } catch (error) {
-                    console.log("This is not a electron app")
-                  }
 
                 } else {
                   this.router.navigateByUrl("/pin-confirm")

@@ -160,8 +160,8 @@ export class Transaction {
      * @param {String} pin
      * @param {function} callback
      */
-    public signMultipleTransactions(txInputData, pin, callback) {
-        if (!pin) {
+    public signMultipleTransactions(txInputData, privateKey, callback) {
+        if (!privateKey) {
             if (typeof callback === 'function') {
                 callback(new Error("Can not use the PIN."), null);
             }
@@ -175,13 +175,13 @@ export class Transaction {
             let txData = txInputData.params[index];
             var inputs = txData.tx.inputs;
             console.log(inputs);
-            var privKeys = this.getAllPrivateKeys(pin, inputs, txData.coinType);
-            if (!privKeys || privKeys.length == 0) {
-                if (typeof callback === 'function') {
-                    //callback(Constant.ERROR_TYPE.INVALID_ADDRESS, null);
-                }
-                return;
-            }
+            // var privKeys = this.getAllPrivateKeys(privateKey, inputs, txData.coinType);
+            // if (!privKeys || privKeys.length == 0) {
+            //     if (typeof callback === 'function') {
+            //         //callback(Constant.ERROR_TYPE.INVALID_ADDRESS, null);
+            //     }
+            //     return;
+            // }
 
             try {
                 var validateTx = txData;
@@ -191,7 +191,7 @@ export class Transaction {
                 validateTx.pubkeys = [];
                 validateTx.signatures = [];
                 validateTx.tosign.map(function (tosign, index) {
-                    var privateKey = privKeys[index];
+                    //var privateKey = privKeys[index];
                     var sign = this.signTxMessage(tosign, privateKey, net);
                     console.log('Sign: ' + sign);
                     validateTx.pubkeys.push(sign.publicKey);

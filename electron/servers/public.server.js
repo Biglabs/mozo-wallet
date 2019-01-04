@@ -1,14 +1,19 @@
 const express = require('express');
 const path = require('path');
-const settings = require('electron-settings');
+const userReference = require('electron-settings');
 const port = 33013;
+const {
+  ERRORS
+} = require('../utils/constants');
+const {
+  ipcMain,
+  remote
+} = require('electron');
 
 function createServer() {
+
   const app = express()
-
-  let mainWindow = this.mainWindow
-
-  console.log("mainWindow", mainWindow)
+  console.log(app)
 
   function resData(status = 200, message = null) {
     return {
@@ -65,133 +70,155 @@ function createServer() {
 
   // });
 
-  // app.get('/checkWallet', (req, res, next) => {
-  //   let response_data = {
-  //     status: "ERROR",
-  //     error: ERRORS.NO_WALLET
-  //   }
+  app.get('/checkWallet', (req, res, next) => {
+    let response_data = {
+      status: "ERROR",
+      error: ERRORS.NO_WALLET
+    }
 
-  //   let wallet = userReference.get("Address");
-  //   let is_new_wallet = userReference.get(CONSTANTS.IS_NEW_WALLET_KEY);
-  //   if (!is_new_wallet && wallet) {
-  //     response_data = {
-  //       status: "SUCCESS",
-  //       data: null,
-  //       error: null
-  //     };
-  //   }
-  //   res.send({
-  //     result: response_data
-  //   });
-  // });
+    let wallet = userReference.get("Address");
+    //let is_new_wallet = userReference.get(CONSTANTS.IS_NEW_WALLET_KEY);
+    //if (!is_new_wallet && wallet) {
+    if (wallet) {
+      response_data = {
+        status: "SUCCESS",
+        data: null,
+        error: null
+      };
+    }
+    res.send({
+      result: response_data
+    });
+  });
 
-  // app.get('/getWalletAddress', (req, res, next) => {
-  //   let wallet = userReference.get("Address");
-  //   let response_data = {
-  //     status: "ERROR",
-  //     error: ERRORS.NO_WALLET
-  //   };
+  app.get('/getWalletAddress', (req, res, next) => {
+    let wallet = userReference.get("Address");
+    let response_data = {
+      status: "ERROR",
+      error: ERRORS.NO_WALLET
+    };
 
-  //   if (!wallet) {
-  //     res.send({
-  //       result: response_data
-  //     });
-  //     return;
-  //   }
+    if (!wallet) {
+      res.send({
+        result: response_data
+      });
+      return;
+    }
 
-  //   let get_all_addresses = false;
+    //let get_all_addresses = false;
 
-  //   let addr_network = req.query.network;
-  //   if (!addr_network) {
-  //     get_all_addresses = true;
-  //   } else {
-  //     if ((typeof addr_network) == "string") {
-  //       addr_network = [addr_network];
-  //     }
-  //     addr_network = addr_network.map(x => x.toUpperCase());
-  //   }
+    // let addr_network = req.query.network;
+    // if (!addr_network) {
+    //   get_all_addresses = true;
+    // } else {
+    //   if ((typeof addr_network) == "string") {
+    //     addr_network = [addr_network];
+    //   }
+    //   addr_network = addr_network.map(x => x.toUpperCase());
+    // }
 
-  //   let wallet_arr = R.map(x => {
-  //     return {
-  //       network: x.network,
-  //       address: x.address,
-  //     }
-  //   }, R.filter(x => addr_network.includes(x.network), wallet));
+    // let wallet_arr = R.map(x => {
+    //   return {
+    //     network: x.network,
+    //     address: x.address,
+    //   }
+    // }, R.filter(x => addr_network.includes(x.network), wallet));
 
-  //   // console.log(JSON.stringify(wallet_arr));
-  //   response_data = {
-  //     status: "SUCCESS",
-  //     data: wallet_arr,
-  //     error: null
-  //   };
-  //   res.send({
-  //     result: response_data
-  //   });
-  // });
+    // console.log(JSON.stringify(wallet_arr));
+    response_data = {
+      status: "SUCCESS",
+      data: {
+        network: wallet.network,
+        address: wallet.address,
+      },
+      error: null
+    };
+    res.send({
+      result: response_data
+    });
+  });
 
-  // app.get('/getWalletBalance', (req, res, next) => {
-  //   let response_data = {
-  //     status: "ERROR",
-  //     error: ERRORS.NO_WALLET
-  //   };
+  app.get('/getWalletBalance', (req, res, next) => {
+    let response_data = {
+      status: "ERROR",
+      error: ERRORS.NO_WALLET
+    };
 
-  //   let addr_network = req.query.network;
-  //   if (!addr_network) {
-  //     response_data.error = ERRORS.NO_WALLET_NETWORK;
-  //     res.send({
-  //       result: response_data
-  //     });
-  //     return;
-  //   }
-  //   let balance_info = common.getWalletBalance(addr_network);
-  //   if (balance_info) {
-  //     response_data = {
-  //       status: "SUCCESS",
-  //       data: balance_info,
-  //       error: null
-  //     };
-  //   } else {
-  //     response_data.error = ERRORS.INTERNAL_ERROR;
-  //   }
-  //   res.send({
-  //     result: response_data
-  //   });
-  // });
+    let addr_network = req.query.network;
+    if (!addr_network) {
+      response_data.error = ERRORS.NO_WALLET_NETWORK;
+      res.send({
+        result: response_data
+      });
+      return;
+    }
 
-  // app.route('/address-book')
-  //   .get((req, res, next) => {
-  //     let response_data = {
-  //       status: "SUCCESS",
-  //       data: address_book.get(),
-  //       error: null
-  //     };
-  //     res.send({
-  //       result: response_data
-  //     });
-  //   })
-  //   .post((req, res, next) => {
-  //     // console.log(req.body);
-  //     let data = req.body;
-  //     let response_data = {
-  //       status: "ERROR",
-  //       error: ERRORS.INTERNAL_ERROR
-  //     };
+    let currentWindow = this.getWindow()
+    // let balance_info = common.getWalletBalance(addr_network);
+    currentWindow.webContents.send("get-balance", {
+      network: addr_network
+    })
+    ipcMain.once("get-balance-callback", (event, arg) => {
+      if (arg) {
+        response_data = {
+          status: "SUCCESS",
+          data: JSON.parse(arg),
+          error: null
+        };
+      } else {
+        response_data.error = ERRORS.INTERNAL_ERROR;
+      }
+      res.send({
+        result: response_data
+      });
+    })
 
-  //     address_book.add(data).then(function (info) {
-  //       response_data = {
-  //         status: "SUCCESS",
-  //         data: address_book.get(),
-  //         error: null
-  //       };
-  //       res.send({
-  //         result: response_data
-  //       });
-  //     }, function (err) {
-  //       res.send({
-  //         result: response_data
-  //       });
-  //     });
-  //   });
+  });
+
+  app.route('/address-book')
+    .get((req, res, next) => {
+      
+      let currentWindow = this.getWindow()
+      currentWindow.webContents.send("get-addressbook", null)
+      ipcMain.once("get-addressbook-callback", (event, arg) => {
+        let response_data = {
+          status: "SUCCESS",
+          data: null,
+          error: null
+        };
+        if (arg) {
+          response_data.data = JSON.parse(arg)
+        } else {
+          response_data.error = ERRORS.INTERNAL_ERROR;
+        }
+        res.send({
+          result: response_data
+        });
+      })
+    })
+    // .post((req, res, next) => {
+    //   // console.log(req.body);
+    //   let data = req.body;
+    //   let response_data = {
+    //     status: "ERROR",
+    //     error: ERRORS.INTERNAL_ERROR
+    //   };
+
+    //   address_book.add(data).then(function (info) {
+    //     response_data = {
+    //       status: "SUCCESS",
+    //       data: address_book.get(),
+    //       error: null
+    //     };
+    //     res.send({
+    //       result: response_data
+    //     });
+    //   }, function (err) {
+    //     res.send({
+    //       result: response_data
+    //     });
+    //   });
+    // });
 
   // app.get('/address-book/find', (req, res, next) => {
   //   let response_data = {
@@ -254,7 +281,9 @@ function createServer() {
   // });
 
   app.post('/transaction/send', (req, res, next) => {
-    // let tx_send_data = req.body;
+    let tx_send_data = req.body;
+
+    console.log(tx_send_data)
     // let wallet_addrs = userReference.get("Address");
     // let response_data = {
     //   status: "ERROR",
@@ -291,13 +320,20 @@ function createServer() {
     //   res.send({
     //     result: response_data
     //   });
-    // });
-    mainWindow.show()
-    mainWindow.focus()
-    mainWindow.webContents.send("test_channel", "ping")
-    res.send({
-      result: true
-    });
+    // }); 
+    let self = this
+    let currentWindow = self.getWindow()
+
+    currentWindow.show()
+    currentWindow.focus()
+    currentWindow.webContents.send("send-transaction", tx_send_data)
+
+    ipcMain.once("send-transaction-callback", (event, arg) => {
+      res.send({
+        result: JSON.parse(arg)
+      });
+      self.hideApp()
+    })
   });
 
   // app.get('/transaction/txstatus', (req, res, next) => {
@@ -375,73 +411,73 @@ function createServer() {
   //   });
   // });
 
-  // app.route('/store/air-drop')
-  //   .post((req, res, next) => {
-  //     let event_data = req.body;
-  //     event_data.stayIn = 0;
+  app.route('/store/air-drop')
+    .post((req, res, next) => {
+      let event_data = req.body;
+      event_data.stayIn = 0;
 
-  //     /*
-  //     {
-  //       "airdropFreq": 0,
-  //       "appliedDateOfWeek": [
-  //         0
-  //       ],
-  //       "beaconInfoId": 0,
-  //       "hourOfDayFrom": 0,
-  //       "hourOfDayTo": 0,
-  //       "mozoAirdropPerCustomerVisit": 0,
-  //       "name": "string",
-  //       "periodFromDate": 0,
-  //       "periodToDate": 0,
-  //       "stayIn": 0,
-  //       "totalNumMozoOffchain": 0
-  //     }
-  //     */
-  //     let response_data = {
-  //       status: "ERROR",
-  //       error: ERRORS.INTERNAL_ERROR
-  //     };
-  //     store.createAirDropEvent(event_data).then(function (info) {
-  //       store.confirmTransaction(info, res);
-  //     }, function (err) {
-  //       res.send({
-  //         result: "ERROR",
-  //         error: response_data
+      /*
+      {
+        "airdropFreq": 0,
+        "appliedDateOfWeek": [
+          0
+        ],
+        "beaconInfoId": 0,
+        "hourOfDayFrom": 0,
+        "hourOfDayTo": 0,
+        "mozoAirdropPerCustomerVisit": 0,
+        "name": "string",
+        "periodFromDate": 0,
+        "periodToDate": 0,
+        "stayIn": 0,
+        "totalNumMozoOffchain": 0
+      }
+      */
+      let response_data = {
+        status: "ERROR",
+        error: ERRORS.INTERNAL_ERROR
+      };
+      store.createAirDropEvent(event_data).then(function (info) {
+        store.confirmTransaction(info, res);
+      }, function (err) {
+        res.send({
+          result: "ERROR",
+          error: response_data
 
-  //       });
-  //     });
+        });
+      });
 
-  //   })
-  //   .get((req, res, next) => {
-  //     let response_data = {
-  //       status: "ERROR",
-  //       data: null,
-  //       error: ERRORS.INTERNAL_ERROR
-  //     };
+    })
+    .get((req, res, next) => {
+      let response_data = {
+        status: "ERROR",
+        data: null,
+        error: ERRORS.INTERNAL_ERROR
+      };
 
-  //     let request_data = req.query;
-  //     log.debug(request_data);
+      let request_data = req.query;
+      log.debug(request_data);
 
-  //     store.airdrop.get(request_data).then(function (info) {
-  //       response_data = {
-  //         status: "SUCCESS",
-  //         data: info.data,
-  //         error: null
-  //       };
-  //       let headers = info.headers;
-  //       for (let header_key in headers) {
-  //         res.header(header_key, headers[header_key]);
-  //       }
-  //       res.send({
-  //         result: response_data
-  //       });
-  //     }, function (err) {
-  //       response_data.error = err
-  //       res.send({
-  //         result: response_data
-  //       });
-  //     });
-  //   });
+      store.airdrop.get(request_data).then(function (info) {
+        response_data = {
+          status: "SUCCESS",
+          data: info.data,
+          error: null
+        };
+        let headers = info.headers;
+        for (let header_key in headers) {
+          res.header(header_key, headers[header_key]);
+        }
+        res.send({
+          result: response_data
+        });
+      }, function (err) {
+        response_data.error = err
+        res.send({
+          result: response_data
+        });
+      });
+    });
 
   // app.get('/store/check_airdrop_status', (req, res, next) => {
   //   let txhash = req.query.txhash;
@@ -474,8 +510,9 @@ function createServer() {
   //   });
   // });
 
-
-  app.listen(port, 'localhost', () => console.log("Public Server started"))
+  app.listen(port, 'localhost', () => {
+    console.log("Public Server started")
+  })
 }
 
 module.exports = {

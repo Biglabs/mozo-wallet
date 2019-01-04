@@ -33,15 +33,10 @@ export class SendPage implements OnInit {
   async onSubmit() {
     const formValues = this.formModel.value
     this.appGlobals.txData = {
-      coinType: "SOLO",
-      network: "SOLO",
-      action: "SIGN",
-      params: {
-        'from': this.appGlobals.address,
-        'to': formValues.toAddress,
-        'value': parseInt(formValues.amount),
-        'network': "SOLO"
-      },
+      'from': this.appGlobals.address,
+      'to': formValues.toAddress,
+      'value': parseInt(formValues.amount),
+      'network': "SOLO"
     };
     const modal = await this.modalController.create({
       component: SendConfirmPage,

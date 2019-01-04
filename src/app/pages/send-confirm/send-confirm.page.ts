@@ -1,5 +1,5 @@
 import { Component} from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, Events } from '@ionic/angular';
 import {SendPinConfirmPage} from '../send-pin-confirm/send-pin-confirm.page'
 import { AppGlobals } from '../../app.globals'
 
@@ -13,10 +13,16 @@ export class SendConfirmPage {
   amount: number = 0
   constructor(
     public modalController: ModalController,
-    private appGlobals: AppGlobals
+    private appGlobals: AppGlobals,
+    public events: Events
   ) { 
-    this.toAddress = this.appGlobals.txData.params.to
-    this.amount = this.appGlobals.txData.params.value
+    this.toAddress = this.appGlobals.txData.to
+    this.amount = this.appGlobals.txData.value
+
+    this.events.subscribe('close:txconfirm1', () => {
+      this.dismiss();
+    });
+    
   }
 
   async continue() {
@@ -26,8 +32,10 @@ export class SendConfirmPage {
     });
     return await modal.present();
   }
+  
 
   dismiss(data?: any) {
+    
     this.modalController.dismiss(data);
   }
 }

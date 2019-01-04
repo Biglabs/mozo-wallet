@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, ModalController } from '@ionic/angular';
+import { NavController, ModalController, Events } from '@ionic/angular';
 import { HttpResponse } from "@angular/common/http";
 import { AppGlobals } from '../../app.globals'
 import { AppService } from '../../app.service'
@@ -7,6 +7,7 @@ import { MozoService } from '../../services/mozo.service'
 import Utils from '../../utils'
 
 import { SaveAddressPage } from '../save-address/save-address.page';
+declare let electron: any;
 
 @Component({
   selector: 'send-pin-confirm',
@@ -26,11 +27,15 @@ export class SendPinConfirmPage {
     private nav: NavController,
     public modalController: ModalController,
     private appService: AppService,
-    private mozoService: MozoService
+    private mozoService: MozoService,
+    public events: Events
   ) {
     // if (this.appGlobals.encryptSeedWord) {
     //   this.isSending = false
     // }
+    this.events.subscribe('close:txconfirm2', () => {
+      this.dismiss();
+    });
   }
 
   address: string = ''
@@ -57,8 +62,10 @@ export class SendPinConfirmPage {
     }
   }
 
-  dismiss(data?: any) {
-    this.modalController.dismiss(data);
+  async dismiss(data?: any) {
+    return await this.modalController.dismiss(data).then(() => {
+      this.events.publish('close:txconfirm1');
+    })
   }
 
   async showSaveAddress() {
@@ -76,9 +83,9 @@ export class SendPinConfirmPage {
         const privKey = Utils.encryption.decrypt(data["Address"]["privkey"], this.pin)
         let txData = this.appGlobals.txData
 
-        this.address = txData.params.to
+        this.address = txData.to
 
-        this.mozoService.createTransaction(txData.params).subscribe((res: HttpResponse<any>) => {
+        this.mozoService.createTransaction(txData).subscribe((res: HttpResponse<any>) => {
           const data = res.body;
           if (data) {
             let request_data = {
@@ -92,12 +99,19 @@ export class SendPinConfirmPage {
               console.log("result", result)
               if (result) {
                 let dataReq = JSON.parse(result);
-                this.mozoService.sendSignedTransaction(dataReq).subscribe((res: HttpResponse<any>) => {
+                this.mozoService.sendSignedTransaction(dataReq).subscribe(async (res: HttpResponse<any>) => {
                   const data = res.body;
-                  this.isSending = true
-                  this.txHash = data.tx.hash
-                  this.getTransactionStatus(data.tx.hash)
-
+                  if (txData.type === 'ex') {
+                    //this.events.publish('close:txconfirm2');
+                    await this.dismiss();
+                    setTimeout(() => {
+                      electron.ipcRenderer.send("send-transaction-callback", JSON.stringify(res.body))
+                    }, 200) 
+                  } else {
+                    this.isSending = true
+                    this.txHash = data.tx.hash
+                    this.getTransactionStatus(data.tx.hash)
+                  }
                 }, (error) => {
 
                 })
@@ -119,17 +133,17 @@ export class SendPinConfirmPage {
   }
 
   getTransactionStatus(txHash) {
-    const getTxStatus = setInterval(()=>{
+    const getTxStatus = setInterval(() => {
       this.mozoService.getTransactionStatus(txHash).subscribe((res: HttpResponse<any>) => {
         const data = res.body;
 
         console.log("status", data)
-        if(data.status === "SUCCESS") {
+        if (data.status === "SUCCESS") {
           this.status = 'success'
           clearInterval(getTxStatus)
         }
 
-        if(data.status === "FAILED") {
+        if (data.status === "FAILED") {
           this.status = 'fail'
           clearInterval(getTxStatus)
         }
