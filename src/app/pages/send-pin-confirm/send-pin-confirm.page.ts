@@ -21,6 +21,7 @@ export class SendPinConfirmPage {
   private pin: string = ""
   private status: string = 'pending'
   private txHash: string = ""
+  pinError: boolean = false
 
   constructor(
     private appGlobals: AppGlobals,
@@ -43,22 +44,15 @@ export class SendPinConfirmPage {
   onChange(pin: string) {
     console.log("code", pin)
     this.pin = pin
+    this.pinError = false
     if (pin.length >= 6) {
-
 
       let mnemonic = Utils.encryption.decrypt(this.appGlobals.encryptSeedWord, this.pin)
       if (mnemonic) {
         this.sendTransaction()
       } else {
-        //show error message
+        this.pinError = true
       }
-
-      // setTimeout(() => {
-      //   this.status = 'success'
-      //   setTimeout(() => {
-      //     this.status = 'fail'
-      //   }, 3000)
-      // }, 3000)
     }
   }
 
@@ -76,56 +70,86 @@ export class SendPinConfirmPage {
     return await modal.present();
   }
 
-  sendTransaction() {
-    this.appService.getSetting(['Address']).then((data) => {
-      console.log("data", data)
-      if (data["Address"]) {
-        const privKey = Utils.encryption.decrypt(data["Address"]["privkey"], this.pin)
-        let txData = this.appGlobals.txData
+  createAirdrop(airdropEvent, privKey) {
+    let requestData = {
+      coinType: "SOLO",
+      network: "SOLO",
+      action: "SIGN",
+      params: airdropEvent.params,
+    };
 
-        this.address = txData.to
+    Utils.transaction.signMultipleTransactions(requestData, privKey, (error, result) => {
+      console.log("error", error)
+      console.log("result", result)
+      if (result) {
+        let dataReq = result;
+        this.mozoService.sendSignedTransactionAirdrop(dataReq).subscribe(async (res: HttpResponse<any>) => {
 
-        this.mozoService.createTransaction(txData).subscribe((res: HttpResponse<any>) => {
-          const data = res.body;
-          if (data) {
-            let request_data = {
-              coinType: "SOLO",
-              network: "SOLO",
-              action: "SIGN",
-              params: data,
-            };
-            Utils.transaction.signTransaction(request_data, privKey, (error, result) => {
-              console.log("error", error)
-              console.log("result", result)
-              if (result) {
-                let dataReq = JSON.parse(result);
-                this.mozoService.sendSignedTransaction(dataReq).subscribe(async (res: HttpResponse<any>) => {
-                  const data = res.body;
-                  if (txData.type === 'ex') {
-                    //this.events.publish('close:txconfirm2');
-                    await this.dismiss();
-                    setTimeout(() => {
-                      electron.ipcRenderer.send("send-transaction-callback", JSON.stringify(res.body))
-                    }, 200) 
-                  } else {
-                    this.isSending = true
-                    this.txHash = data.tx.hash
-                    this.getTransactionStatus(data.tx.hash)
-                  }
-                }, (error) => {
-
-                })
-              }
-            })
-          }
-
-          console.log("data address book ", data)
+          await this.dismiss();
+          setTimeout(() => {
+            electron.ipcRenderer.send("send-transaction-airdrop-callback", JSON.stringify(res.body))
+          }, 200)
 
         }, (error) => {
 
         })
+      }
+    })
+  }
 
+  createTransaction(txData, privKey) {
+    this.mozoService.createTransaction(txData).subscribe((res: HttpResponse<any>) => {
+      const data = res.body;
+      if (data) {
+        let requestData = {
+          coinType: "SOLO",
+          network: "SOLO",
+          action: "SIGN",
+          params: data,
+        };
+        Utils.transaction.signTransaction(requestData, privKey, (error, result) => {
+          console.log("error", error)
+          console.log("result", result)
+          if (result) {
+            let dataReq = JSON.parse(result);
+            this.mozoService.sendSignedTransaction(dataReq).subscribe(async (res: HttpResponse<any>) => {
+              let txReq = res.body
+              
+              if (txData.type === 'ex') {
+                await this.dismiss();
+                setTimeout(() => {
+                  electron.ipcRenderer.send("send-transaction-callback", JSON.stringify(txReq))
+                }, 200)
+              } else {
+                this.isSending = true
+                this.txHash = txReq.tx.hash
+                this.getTransactionStatus(txReq.tx.hash)
+              }
+            }, (error) => {
 
+            })
+          }
+        })
+      }
+
+      console.log("data address book ", data)
+
+    }, (error) => {
+
+    })
+  }
+
+  sendTransaction() {
+    this.appService.getSetting(['Address']).then((data) => {
+      if (data["Address"]) {
+        const privKey = Utils.encryption.decrypt(data["Address"]["privkey"], this.pin)
+        let txData = this.appGlobals.txData
+        this.address = txData.to
+        if (txData.txType === 'airdrop') {
+          this.createAirdrop(txData, privKey)
+        } else {
+          this.createTransaction(txData, privKey)
+        }
       }
     }, (error) => {
       //Show error

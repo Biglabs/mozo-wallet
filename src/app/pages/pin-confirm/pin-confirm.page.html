@@ -24,6 +24,10 @@
                             <p>Security PIN should be 6 di-git numbers</p>
                         </div>
                     </ng-template>
+                    <div *ngIf="pinError" item-center-small-icon>
+                        <ion-icon margin-top custom-icon size="small" src="assets/svg/failed.svg"></ion-icon>
+                        <ion-label color="medium"><small size-md> &nbsp;<ion-text color="danger">Incorrect PIN</ion-text></small></ion-label>
+                    </div>
                 </ion-col>
                 <ion-col height-65 size="12" align-items-stretch>
                     <pin-code (change)="onChange($event)"></pin-code>

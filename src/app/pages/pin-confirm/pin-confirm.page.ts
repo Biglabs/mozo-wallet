@@ -16,6 +16,7 @@ import Utils from '../../utils'
 export class PinConfirmPage {
 
   public loading: boolean = false
+  public pinError: boolean = false
   public isPinConfirm: boolean = true
   private pin: string = ""
 
@@ -31,31 +32,29 @@ export class PinConfirmPage {
   }
 
   onChange(pin: string) {
-    console.log("code", pin)
+    this.pinError = false
     this.pin = pin
   }
 
   continue() {
-    this.loading = true
-    if (this.pin.length > 0) {
-      let mnemonic = this.appGlobals.seedWord
-      if (this.appGlobals.encryptSeedWord) {
-        mnemonic = Utils.encryption.decrypt(this.appGlobals.encryptSeedWord, this.pin)
-      }
-
-      console.log("mnemonic", mnemonic)
+    let mnemonic = this.appGlobals.seedWord
+    if (this.appGlobals.encryptSeedWord) {
+      mnemonic = Utils.encryption.decrypt(this.appGlobals.encryptSeedWord, this.pin)
+    }
 
 
+    if (mnemonic) {
+      this.loading = true
       let wallet = Utils.wallet.generateWallets(mnemonic)
 
       let address = Utils.wallet.generateAddressAtIndex(wallet, 0)
-      
+
 
       if (address) {
         address['privkey'] = Utils.encryption.encrypt(address['privkey'], this.pin)
 
-        console.log("address", address)   
-           
+        console.log("address", address)
+
         let saveAddress = () => {
           this.appGlobals.address = address.address
           this.appService.addSetting({
@@ -87,9 +86,8 @@ export class PinConfirmPage {
           this.nav.navigateRoot('/app/tabs/(my-wallet:my-wallet)')
         }
       }
-
+    } else {
+      this.pinError = true
     }
-
   }
-
 }

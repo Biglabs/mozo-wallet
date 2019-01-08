@@ -90,14 +90,66 @@ export class AppComponent {
               return await modal.present();
             })
 
+            electron.ipcRenderer.on("send-transaction-airdrop", (event, arg) => {
+
+              let airdropData = arg
+              // arg.type = "ex" //call from external
+              // arg.txType = "airdrop"
+              airdropData.address = this.appGlobals.address
+              airdropData.active = true;
+              airdropData.mozoAirdropPerCustomerVisit *= 100;
+              airdropData.totalNumMozoOffchain *= 100;
+
+              const sendCreateAirdrop = () => {
+                this.mozoService.createAirDropEvent(airdropData).subscribe( async (res: HttpResponse<any>) => {
+                  const data = res.body;
+                  if (data) {
+                    let txData = {
+                      type: "ex",
+                      txType: "airdrop",
+                      to: "SOLO",
+                      value: arg.totalNumMozoOffchain,
+                      action: "SIGN",
+                      params: data,
+                    };
+
+                    this.appGlobals.txData = txData;
+                    const modal = await this.modalController.create({
+                      component: SendConfirmPage,
+                      componentProps: { value: 123 }
+                    });
+  
+                    return await modal.present();
+                  }
+
+                 
+                }, (error) => {
+
+                })
+              }
+
+              if (!arg.beaconInfoId) {
+                this.mozoService.getBeacon().subscribe((res: HttpResponse<any>) => {
+                  const data = res.body;
+                  arg.beaconInfoId = data[0].id;
+                  sendCreateAirdrop()
+
+                }, (error) => {
+
+                })
+              } else {
+                sendCreateAirdrop()
+              }
+            })
+
             electron.ipcRenderer.on("get-balance", async (event, arg) => {
               this.mozoService.getBalance(this.appGlobals.address).subscribe((res: HttpResponse<any>) => {
                 const data = res.body;
                 electron.ipcRenderer.send("get-balance-callback", JSON.stringify(res.body))
                 console.log("data balance ", data)
-          
+
               }, (error) => {
-                 
+
               })
             })
 
@@ -106,14 +158,26 @@ export class AppComponent {
                 const data = res.body;
                 electron.ipcRenderer.send("get-addressbook-callback", JSON.stringify(res.body))
                 console.log("data balance ", data)
-          
+
               }, (error) => {
-                 
+
+              })
+            })
+
+            electron.ipcRenderer.on("get-transaction-status", async (event, arg) => {
+              this.mozoService.getTransactionStatus(arg.txhash).subscribe((res: HttpResponse<any>) => {
+                const data = res.body;
+                electron.ipcRenderer.send("get-transaction-status-callback", JSON.stringify(res.body))
+                console.log("data balance ", data)
+
+              }, (error) => {
+
               })
             })
           } catch (error) {
             console.log("This is not a electron app")
           }
+
 
           this.mozoService.getUserProfile().subscribe((res: HttpResponse<any>) => {
             const data = res.body;

@@ -190,7 +190,7 @@ export class Transaction {
                 // signing each of the hex-encoded string required to finalize the transaction
                 validateTx.pubkeys = [];
                 validateTx.signatures = [];
-                validateTx.tosign.map(function (tosign, index) {
+                validateTx.tosign.map((tosign, index) => {
                     //var privateKey = privKeys[index];
                     var sign = this.signTxMessage(tosign, privateKey, net);
                     console.log('Sign: ' + sign);
@@ -203,7 +203,7 @@ export class Transaction {
                     }
                     return;
                 }
-                result_data.push(JSON.stringify(validateTx));
+                result_data.push(validateTx);
 
             } catch (error) {
                 if (typeof callback === 'function') {

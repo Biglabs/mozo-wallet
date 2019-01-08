@@ -53,7 +53,7 @@ var PinConfirmPageModule = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<ion-header>\n    <ion-toolbar>\n        <ion-buttons slot=\"start\">\n            <ion-back-button text=\"Back\"></ion-back-button>\n        </ion-buttons>\n        <ion-title text-center>\n            <app-logo></app-logo>\n        </ion-title>\n    </ion-toolbar>\n</ion-header>\n<ion-content padding>\n    <loading top=\"35%\" *ngIf=\"loading; else confirmPin\"></loading>\n    <ng-template #confirmPin>\n        <ion-grid full-height no-padding>\n            <ion-row full-height no-padding>\n                <ion-col height-20 size=\"12\" text-center align-items-start>\n                    <div margin-vertical *ngIf=\"isPinConfirm; else pinCode\">\n                        <h3 title no-margin>CONFIRM SECURITY PIN</h3>\n                        <p>Re-enter your PIN</p>\n                    </div>\n                    <ng-template #pinCode>\n                        <div margin-vertical>\n                            <h3 title no-margin>ENTER YOUR SECURITY PIN</h3>\n                            <p>Security PIN should be 6 di-git numbers</p>\n                        </div>\n                    </ng-template>\n                </ion-col>\n                <ion-col height-65 size=\"12\" align-items-stretch>\n                    <pin-code (change)=\"onChange($event)\"></pin-code>\n                </ion-col>\n                <ion-col height-15 size=\"12\" align-items-end no-padding>\n                    <ion-row align-items-end full-height no-padding>\n                        <ion-col padding-bottom>\n                            <ion-button [disabled]=\"pin.length <= 5\" (click)=\"continue()\" align-items-end shadow expand=\"block\">Continue</ion-button>\n                        </ion-col>\n                    </ion-row>\n                </ion-col>\n            </ion-row>\n        </ion-grid>\n    </ng-template>\n</ion-content>"
+module.exports = "<ion-header>\n    <ion-toolbar>\n        <ion-buttons slot=\"start\">\n            <ion-back-button text=\"Back\"></ion-back-button>\n        </ion-buttons>\n        <ion-title text-center>\n            <app-logo></app-logo>\n        </ion-title>\n    </ion-toolbar>\n</ion-header>\n<ion-content padding>\n    <loading top=\"35%\" *ngIf=\"loading; else confirmPin\"></loading>\n    <ng-template #confirmPin>\n        <ion-grid full-height no-padding>\n            <ion-row full-height no-padding>\n                <ion-col height-20 size=\"12\" text-center align-items-start>\n                    <div margin-vertical *ngIf=\"isPinConfirm; else pinCode\">\n                        <h3 title no-margin>CONFIRM SECURITY PIN</h3>\n                        <p>Re-enter your PIN</p>\n                    </div>\n                    <ng-template #pinCode>\n                        <div margin-vertical>\n                            <h3 title no-margin>ENTER YOUR SECURITY PIN</h3>\n                            <p>Security PIN should be 6 di-git numbers</p>\n                        </div>\n                    </ng-template>\n                    <div *ngIf=\"pinError\" item-center-small-icon>\n                        <ion-icon margin-top custom-icon size=\"small\" src=\"assets/svg/failed.svg\"></ion-icon>\n                        <ion-label color=\"medium\"><small size-md> &nbsp;<ion-text color=\"danger\">Incorrect PIN</ion-text></small></ion-label>\n                    </div>\n                </ion-col>\n                <ion-col height-65 size=\"12\" align-items-stretch>\n                    <pin-code (change)=\"onChange($event)\"></pin-code>\n                </ion-col>\n                <ion-col height-15 size=\"12\" align-items-end no-padding>\n                    <ion-row align-items-end full-height no-padding>\n                        <ion-col padding-bottom>\n                            <ion-button [disabled]=\"pin.length <= 5\" (click)=\"continue()\" align-items-end shadow expand=\"block\">Continue</ion-button>\n                        </ion-col>\n                    </ion-row>\n                </ion-col>\n            </ion-row>\n        </ion-grid>\n    </ng-template>\n</ion-content>"
 
 /***/ }),
 
@@ -108,6 +108,7 @@ var PinConfirmPage = /** @class */ (function () {
         this.mozoService = mozoService;
         this.appService = appService;
         this.loading = false;
+        this.pinError = false;
         this.isPinConfirm = true;
         this.pin = "";
         if (this.appGlobals.encryptSeedWord) {
@@ -115,18 +116,17 @@ var PinConfirmPage = /** @class */ (function () {
         }
     }
     PinConfirmPage.prototype.onChange = function (pin) {
-        console.log("code", pin);
+        this.pinError = false;
         this.pin = pin;
     };
     PinConfirmPage.prototype.continue = function () {
         var _this = this;
-        this.loading = true;
-        if (this.pin.length > 0) {
-            var mnemonic = this.appGlobals.seedWord;
-            if (this.appGlobals.encryptSeedWord) {
-                mnemonic = _utils__WEBPACK_IMPORTED_MODULE_5__["default"].encryption.decrypt(this.appGlobals.encryptSeedWord, this.pin);
-            }
-            console.log("mnemonic", mnemonic);
+        var mnemonic = this.appGlobals.seedWord;
+        if (this.appGlobals.encryptSeedWord) {
+            mnemonic = _utils__WEBPACK_IMPORTED_MODULE_5__["default"].encryption.decrypt(this.appGlobals.encryptSeedWord, this.pin);
+        }
+        if (mnemonic) {
+            this.loading = true;
             var wallet = _utils__WEBPACK_IMPORTED_MODULE_5__["default"].wallet.generateWallets(mnemonic);
             var address_1 = _utils__WEBPACK_IMPORTED_MODULE_5__["default"].wallet.generateAddressAtIndex(wallet, 0);
             if (address_1) {
@@ -161,6 +161,9 @@ var PinConfirmPage = /** @class */ (function () {
                     this.nav.navigateRoot('/app/tabs/(my-wallet:my-wallet)');
                 }
             }
+        }
+        else {
+            this.pinError = true;
         }
     };
     PinConfirmPage = __decorate([

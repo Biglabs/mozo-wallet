@@ -28,6 +28,10 @@ export class MozoService {
     return this.http.get<any>(`${environment.apis.solomon}/contacts`, { observe: 'response' });
   }
 
+  getTransactions(address, params): Observable<HttpResponse<any>> {
+    return this.http.get<any>(`${environment.apis.solomon}/solo/contract/solo-token/txhistory/${address}`, { params : params, observe: 'response' });
+  }
+
   createTransaction(data): Observable<HttpResponse<any>> {
     data.to = data.to.trim();
     let reqData = {
@@ -47,6 +51,18 @@ export class MozoService {
     };
 
     return this.http.post<any>(`${environment.apis.solomon}/solo/contract/solo-token/transfer`, reqData, { observe: 'response' });
+  };
+
+  getBeacon(): Observable<HttpResponse<any>> {
+    return this.http.get<any>(`${environment.apis.store}/retailer/beacon`, { observe: 'response' });
+  }
+
+  createAirDropEvent(airdropEvent): Observable<HttpResponse<any>> {
+    return this.http.post<any>(`${environment.apis.store}/air-drops/prepare-event`, airdropEvent, { observe: 'response' });
+  }
+
+  sendSignedTransactionAirdrop(data): Observable<HttpResponse<any>> {
+    return this.http.post<any>(`${environment.apis.store}/air-drops/sign`, data, { observe: 'response' });
   };
 
   sendSignedTransaction(data): Observable<HttpResponse<any>> {

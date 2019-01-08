@@ -1956,6 +1956,57 @@ var AppComponent = /** @class */ (function () {
                                                 }
                                             });
                                         }); });
+                                        electron.ipcRenderer.on("send-transaction-airdrop", function (event, arg) {
+                                            var airdropData = arg;
+                                            // arg.type = "ex" //call from external
+                                            // arg.txType = "airdrop"
+                                            airdropData.address = _this.appGlobals.address;
+                                            airdropData.active = true;
+                                            airdropData.mozoAirdropPerCustomerVisit *= 100;
+                                            airdropData.totalNumMozoOffchain *= 100;
+                                            var sendCreateAirdrop = function () {
+                                                _this.mozoService.createAirDropEvent(airdropData).subscribe(function (res) { return __awaiter(_this, void 0, void 0, function () {
+                                                    var data, txData, modal;
+                                                    return __generator(this, function (_a) {
+                                                        switch (_a.label) {
+                                                            case 0:
+                                                                data = res.body;
+                                                                if (!data) return [3 /*break*/, 3];
+                                                                txData = {
+                                                                    type: "ex",
+                                                                    txType: "airdrop",
+                                                                    to: "SOLO",
+                                                                    value: arg.totalNumMozoOffchain,
+                                                                    action: "SIGN",
+                                                                    params: data,
+                                                                };
+                                                                this.appGlobals.txData = txData;
+                                                                return [4 /*yield*/, this.modalController.create({
+                                                                        component: _pages_send_confirm_send_confirm_page__WEBPACK_IMPORTED_MODULE_6__["SendConfirmPage"],
+                                                                        componentProps: { value: 123 }
+                                                                    })];
+                                                            case 1:
+                                                                modal = _a.sent();
+                                                                return [4 /*yield*/, modal.present()];
+                                                            case 2: return [2 /*return*/, _a.sent()];
+                                                            case 3: return [2 /*return*/];
+                                                        }
+                                                    });
+                                                }); }, function (error) {
+                                                });
+                                            };
+                                            if (!arg.beaconInfoId) {
+                                                _this.mozoService.getBeacon().subscribe(function (res) {
+                                                    var data = res.body;
+                                                    arg.beaconInfoId = data[0].id;
+                                                    sendCreateAirdrop();
+                                                }, function (error) {
+                                                });
+                                            }
+                                            else {
+                                                sendCreateAirdrop();
+                                            }
+                                        });
                                         electron.ipcRenderer.on("get-balance", function (event, arg) { return __awaiter(_this, void 0, void 0, function () {
                                             return __generator(this, function (_a) {
                                                 this.mozoService.getBalance(this.appGlobals.address).subscribe(function (res) {
@@ -1972,6 +2023,17 @@ var AppComponent = /** @class */ (function () {
                                                 this.mozoService.getAddressBook().subscribe(function (res) {
                                                     var data = res.body;
                                                     electron.ipcRenderer.send("get-addressbook-callback", JSON.stringify(res.body));
+                                                    console.log("data balance ", data);
+                                                }, function (error) {
+                                                });
+                                                return [2 /*return*/];
+                                            });
+                                        }); });
+                                        electron.ipcRenderer.on("get-transaction-status", function (event, arg) { return __awaiter(_this, void 0, void 0, function () {
+                                            return __generator(this, function (_a) {
+                                                this.mozoService.getTransactionStatus(arg.txhash).subscribe(function (res) {
+                                                    var data = res.body;
+                                                    electron.ipcRenderer.send("get-transaction-status-callback", JSON.stringify(res.body));
                                                     console.log("data balance ", data);
                                                 }, function (error) {
                                                 });
@@ -3367,7 +3429,7 @@ var SendConfirmPage = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<ion-header>\n    <ion-toolbar>\n        <ion-title text-center>\n            <app-logo></app-logo>\n        </ion-title>\n        <ion-buttons slot=\"end\">\n            <ion-button (click)=\"dismiss()\">{{!isSending? \"Cancel\" : \"Close\"}}</ion-button>\n        </ion-buttons>\n    </ion-toolbar>\n</ion-header>\n<ion-content padding>\n    <ion-grid *ngIf=\"!isSending; else sending\" full-height no-padding>\n        <ion-row full-height no-padding>\n            <ion-col height-20 size=\"12\" text-center align-items-start>\n                <div margin-vertical *ngIf=\"isPinConfirm; else pinCode\">\n                    <h3 title no-margin>CONFIRM SECURITY PIN</h3>\n                    <p>Re-enter your PIN</p>\n                </div>\n                <ng-template #pinCode>\n                    <div margin-vertical>\n                        <h3 title no-margin>ENTER YOUR SECURITY PIN</h3>\n                        <p>Security PIN should be 6 di-git numbers</p>\n                    </div>\n                </ng-template>\n            </ion-col>\n            <ion-col height-65 size=\"12\" align-items-stretch>\n                <pin-code (change)=\"onChange($event)\"></pin-code>\n            </ion-col>\n            <ion-col height-15 size=\"12\" align-items-end no-padding>\n                <ion-row align-items-end full-height no-padding>\n                    <ion-col padding-bottom>\n                        <!-- <ion-button [disabled]=\"pin.length <= 5\" (click)=\"continue()\" align-items-end shadow expand=\"block\">Continue</ion-button> -->\n                    </ion-col>\n                </ion-row>\n            </ion-col>\n        </ion-row>\n    </ion-grid>\n    <ng-template #sending>\n        <ion-grid full-height no-padding>\n            <ion-row full-height no-padding>\n                <ion-col padding-top margin-top height-20 size=\"12\" text-center align-items-start>\n                    <img src=\"assets/svg/sending.svg\" />\n                    <p>Your TX has been broadcast</p>\n                </ion-col>\n                <ion-col padding-top margin-top-sm height-65 size=\"12\" text-center align-items-stretch>\n                    <ion-label>TX Hash:</ion-label>\n                    <div margin-top-sm>\n                        <ion-label color=\"primary\"><small size-md>{{txHash}}</small></ion-label>\n                    </div>\n                    <div *ngIf=\"status==='pending'\" padding item-center>\n                        <ion-icon margin-top custom-icon size=\"large\" src=\"assets/svg/loading.svg\"></ion-icon>\n                        <ion-label color=\"medium\"><small size-md> &nbsp;<i>Pending</i></small></ion-label>\n                    </div>\n                    <div *ngIf=\"status==='success'\" padding item-center>\n                        <ion-icon margin-top custom-icon size=\"large\" src=\"assets/svg/success.svg\"></ion-icon>\n                        <ion-label color=\"medium\"><small size-md> &nbsp;<i>Success</i></small></ion-label>\n                    </div>\n                    <div *ngIf=\"status==='fail'\" padding item-center>\n                        <ion-icon margin-top custom-icon size=\"large\" src=\"assets/svg/failed.svg\"></ion-icon>\n                        <ion-label color=\"medium\"><small size-md> &nbsp;<i>Failed</i></small></ion-label>\n                    </div>\n                </ion-col>\n                <ion-col height-15 size=\"12\" align-items-end no-padding>\n                    <ion-row align-items-end full-height no-padding>\n                        <ion-col padding>\n                            <ion-button margin-bottom fill=\"outline\" large-radius expand=\"block\">\n                                <ion-icon src=\"assets/svg/paper-icon.svg\"></ion-icon>&nbsp;\n                                View Transaction Detail\n                            </ion-button>\n                            <ion-button (click)=\"showSaveAddress()\" fill=\"outline\" large-radius expand=\"block\">\n                                <ion-icon name=\"md-person-add\"></ion-icon>&nbsp;\n                                Save Wallet Address\n                            </ion-button>\n                        </ion-col>\n                    </ion-row>\n                </ion-col>\n            </ion-row>\n        </ion-grid>\n    </ng-template>\n</ion-content>"
+module.exports = "<ion-header>\n    <ion-toolbar>\n        <ion-title text-center>\n            <app-logo></app-logo>\n        </ion-title>\n        <ion-buttons slot=\"end\">\n            <ion-button (click)=\"dismiss()\">{{!isSending? \"Cancel\" : \"Close\"}}</ion-button>\n        </ion-buttons>\n    </ion-toolbar>\n</ion-header>\n<ion-content padding>\n    <ion-grid *ngIf=\"!isSending; else sending\" full-height no-padding>\n        <ion-row full-height no-padding>\n            <ion-col height-20 size=\"12\" text-center align-items-start>\n                <div margin-vertical *ngIf=\"isPinConfirm; else pinCode\">\n                    <h3 title no-margin>CONFIRM SECURITY PIN</h3>\n                    <p>Re-enter your PIN</p>\n                </div>\n                <ng-template #pinCode>\n                    <div margin-vertical>\n                        <h3 title no-margin>ENTER YOUR SECURITY PIN</h3>\n                        <p>Security PIN should be 6 di-git numbers</p>\n                    </div>\n                </ng-template>\n                <div *ngIf=\"pinError\" item-center-small-icon>\n                    <ion-icon margin-top custom-icon size=\"small\" src=\"assets/svg/failed.svg\"></ion-icon>\n                    <ion-label color=\"medium\"><small size-md> &nbsp;<ion-text color=\"danger\">Incorrect PIN</ion-text></small></ion-label>\n                </div>\n            </ion-col>\n            <ion-col height-65 size=\"12\" align-items-stretch>\n                <pin-code (change)=\"onChange($event)\"></pin-code>\n            </ion-col>\n            <ion-col height-15 size=\"12\" align-items-end no-padding>\n                <ion-row align-items-end full-height no-padding>\n                    <ion-col padding-bottom>\n                        <!-- <ion-button [disabled]=\"pin.length <= 5\" (click)=\"continue()\" align-items-end shadow expand=\"block\">Continue</ion-button> -->\n                    </ion-col>\n                </ion-row>\n            </ion-col>\n        </ion-row>\n    </ion-grid>\n    <ng-template #sending>\n        <ion-grid full-height no-padding>\n            <ion-row full-height no-padding>\n                <ion-col padding-top margin-top height-20 size=\"12\" text-center align-items-start>\n                    <img src=\"assets/svg/sending.svg\" />\n                    <p>Your TX has been broadcast</p>\n                </ion-col>\n                <ion-col padding-top margin-top-sm height-65 size=\"12\" text-center align-items-stretch>\n                    <ion-label>TX Hash:</ion-label>\n                    <div margin-top-sm>\n                        <ion-label color=\"primary\"><small size-md>{{txHash}}</small></ion-label>\n                    </div>\n                    <div *ngIf=\"status==='pending'\" padding item-center>\n                        <ion-icon margin-top custom-icon size=\"large\" src=\"assets/svg/loading.svg\"></ion-icon>\n                        <ion-label color=\"medium\"><small size-md> &nbsp;<i>Pending</i></small></ion-label>\n                    </div>\n                    <div *ngIf=\"status==='success'\" padding item-center>\n                        <ion-icon margin-top custom-icon size=\"large\" src=\"assets/svg/success.svg\"></ion-icon>\n                        <ion-label color=\"medium\"><small size-md> &nbsp;<i>Success</i></small></ion-label>\n                    </div>\n                    <div *ngIf=\"status==='fail'\" padding item-center>\n                        <ion-icon margin-top custom-icon size=\"large\" src=\"assets/svg/failed.svg\"></ion-icon>\n                        <ion-label color=\"medium\"><small size-md> &nbsp;<i>Failed</i></small></ion-label>\n                    </div>\n                </ion-col>\n                <ion-col height-15 size=\"12\" align-items-end no-padding>\n                    <ion-row align-items-end full-height no-padding>\n                        <ion-col padding>\n                            <ion-button margin-bottom fill=\"outline\" large-radius expand=\"block\">\n                                <ion-icon src=\"assets/svg/paper-icon.svg\"></ion-icon>&nbsp;\n                                View Transaction Detail\n                            </ion-button>\n                            <ion-button (click)=\"showSaveAddress()\" fill=\"outline\" large-radius expand=\"block\">\n                                <ion-icon name=\"md-person-add\"></ion-icon>&nbsp;\n                                Save Wallet Address\n                            </ion-button>\n                        </ion-col>\n                    </ion-row>\n                </ion-col>\n            </ion-row>\n        </ion-grid>\n    </ng-template>\n</ion-content>"
 
 /***/ }),
 
@@ -3464,6 +3526,7 @@ var SendPinConfirmPage = /** @class */ (function () {
         this.pin = "";
         this.status = 'pending';
         this.txHash = "";
+        this.pinError = false;
         this.address = '';
         // if (this.appGlobals.encryptSeedWord) {
         //   this.isSending = false
@@ -3475,20 +3538,15 @@ var SendPinConfirmPage = /** @class */ (function () {
     SendPinConfirmPage.prototype.onChange = function (pin) {
         console.log("code", pin);
         this.pin = pin;
+        this.pinError = false;
         if (pin.length >= 6) {
             var mnemonic = _utils__WEBPACK_IMPORTED_MODULE_5__["default"].encryption.decrypt(this.appGlobals.encryptSeedWord, this.pin);
             if (mnemonic) {
                 this.sendTransaction();
             }
             else {
-                //show error message
+                this.pinError = true;
             }
-            // setTimeout(() => {
-            //   this.status = 'success'
-            //   setTimeout(() => {
-            //     this.status = 'fail'
-            //   }, 3000)
-            // }, 3000)
         }
     };
     SendPinConfirmPage.prototype.dismiss = function (data) {
@@ -3521,60 +3579,96 @@ var SendPinConfirmPage = /** @class */ (function () {
             });
         });
     };
+    SendPinConfirmPage.prototype.createAirdrop = function (airdropEvent, privKey) {
+        var _this = this;
+        var requestData = {
+            coinType: "SOLO",
+            network: "SOLO",
+            action: "SIGN",
+            params: airdropEvent.params,
+        };
+        _utils__WEBPACK_IMPORTED_MODULE_5__["default"].transaction.signMultipleTransactions(requestData, privKey, function (error, result) {
+            console.log("error", error);
+            console.log("result", result);
+            if (result) {
+                var dataReq = result;
+                _this.mozoService.sendSignedTransactionAirdrop(dataReq).subscribe(function (res) { return __awaiter(_this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, this.dismiss()];
+                            case 1:
+                                _a.sent();
+                                setTimeout(function () {
+                                    electron.ipcRenderer.send("send-transaction-airdrop-callback", JSON.stringify(res.body));
+                                }, 200);
+                                return [2 /*return*/];
+                        }
+                    });
+                }); }, function (error) {
+                });
+            }
+        });
+    };
+    SendPinConfirmPage.prototype.createTransaction = function (txData, privKey) {
+        var _this = this;
+        this.mozoService.createTransaction(txData).subscribe(function (res) {
+            var data = res.body;
+            if (data) {
+                var requestData = {
+                    coinType: "SOLO",
+                    network: "SOLO",
+                    action: "SIGN",
+                    params: data,
+                };
+                _utils__WEBPACK_IMPORTED_MODULE_5__["default"].transaction.signTransaction(requestData, privKey, function (error, result) {
+                    console.log("error", error);
+                    console.log("result", result);
+                    if (result) {
+                        var dataReq = JSON.parse(result);
+                        _this.mozoService.sendSignedTransaction(dataReq).subscribe(function (res) { return __awaiter(_this, void 0, void 0, function () {
+                            var txReq;
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0:
+                                        txReq = res.body;
+                                        if (!(txData.type === 'ex')) return [3 /*break*/, 2];
+                                        return [4 /*yield*/, this.dismiss()];
+                                    case 1:
+                                        _a.sent();
+                                        setTimeout(function () {
+                                            electron.ipcRenderer.send("send-transaction-callback", JSON.stringify(txReq));
+                                        }, 200);
+                                        return [3 /*break*/, 3];
+                                    case 2:
+                                        this.isSending = true;
+                                        this.txHash = txReq.tx.hash;
+                                        this.getTransactionStatus(txReq.tx.hash);
+                                        _a.label = 3;
+                                    case 3: return [2 /*return*/];
+                                }
+                            });
+                        }); }, function (error) {
+                        });
+                    }
+                });
+            }
+            console.log("data address book ", data);
+        }, function (error) {
+        });
+    };
     SendPinConfirmPage.prototype.sendTransaction = function () {
         var _this = this;
         this.appService.getSetting(['Address']).then(function (data) {
-            console.log("data", data);
             if (data["Address"]) {
-                var privKey_1 = _utils__WEBPACK_IMPORTED_MODULE_5__["default"].encryption.decrypt(data["Address"]["privkey"], _this.pin);
-                var txData_1 = _this.appGlobals.txData;
-                _this.address = txData_1.to;
-                _this.mozoService.createTransaction(txData_1).subscribe(function (res) {
-                    var data = res.body;
-                    if (data) {
-                        var request_data = {
-                            coinType: "SOLO",
-                            network: "SOLO",
-                            action: "SIGN",
-                            params: data,
-                        };
-                        _utils__WEBPACK_IMPORTED_MODULE_5__["default"].transaction.signTransaction(request_data, privKey_1, function (error, result) {
-                            console.log("error", error);
-                            console.log("result", result);
-                            if (result) {
-                                var dataReq = JSON.parse(result);
-                                _this.mozoService.sendSignedTransaction(dataReq).subscribe(function (res) { return __awaiter(_this, void 0, void 0, function () {
-                                    var data;
-                                    return __generator(this, function (_a) {
-                                        switch (_a.label) {
-                                            case 0:
-                                                data = res.body;
-                                                if (!(txData_1.type === 'ex')) return [3 /*break*/, 2];
-                                                //this.events.publish('close:txconfirm2');
-                                                return [4 /*yield*/, this.dismiss()];
-                                            case 1:
-                                                //this.events.publish('close:txconfirm2');
-                                                _a.sent();
-                                                setTimeout(function () {
-                                                    electron.ipcRenderer.send("send-transaction-callback", JSON.stringify(res.body));
-                                                }, 200);
-                                                return [3 /*break*/, 3];
-                                            case 2:
-                                                this.isSending = true;
-                                                this.txHash = data.tx.hash;
-                                                this.getTransactionStatus(data.tx.hash);
-                                                _a.label = 3;
-                                            case 3: return [2 /*return*/];
-                                        }
-                                    });
-                                }); }, function (error) {
-                                });
-                            }
-                        });
-                    }
-                    console.log("data address book ", data);
-                }, function (error) {
-                });
+                var privKey = _utils__WEBPACK_IMPORTED_MODULE_5__["default"].encryption.decrypt(data["Address"]["privkey"], _this.pin);
+                var txData = _this.appGlobals.txData;
+                _this.address = txData.to;
+                if (txData.txType === 'airdrop') {
+                    _this.createAirdrop(txData, privKey);
+                }
+                else {
+                    _this.createTransaction(txData, privKey);
+                }
             }
         }, function (error) {
             //Show error
@@ -3661,6 +3755,9 @@ var MozoService = /** @class */ (function () {
     MozoService.prototype.getAddressBook = function () {
         return this.http.get(_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].apis.solomon + "/contacts", { observe: 'response' });
     };
+    MozoService.prototype.getTransactions = function (address, params) {
+        return this.http.get(_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].apis.solomon + "/solo/contract/solo-token/txhistory/" + address, { params: params, observe: 'response' });
+    };
     MozoService.prototype.createTransaction = function (data) {
         data.to = data.to.trim();
         var reqData = {
@@ -3679,6 +3776,16 @@ var MozoService = /** @class */ (function () {
             ]
         };
         return this.http.post(_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].apis.solomon + "/solo/contract/solo-token/transfer", reqData, { observe: 'response' });
+    };
+    ;
+    MozoService.prototype.getBeacon = function () {
+        return this.http.get(_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].apis.store + "/retailer/beacon", { observe: 'response' });
+    };
+    MozoService.prototype.createAirDropEvent = function (airdropEvent) {
+        return this.http.post(_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].apis.store + "/air-drops/prepare-event", airdropEvent, { observe: 'response' });
+    };
+    MozoService.prototype.sendSignedTransactionAirdrop = function (data) {
+        return this.http.post(_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].apis.store + "/air-drops/sign", data, { observe: 'response' });
     };
     ;
     MozoService.prototype.sendSignedTransaction = function (data) {
@@ -3905,8 +4012,9 @@ var Transaction = /** @class */ (function () {
      * @param {String} pin
      * @param {function} callback
      */
-    Transaction.prototype.signMultipleTransactions = function (txInputData, pin, callback) {
-        if (!pin) {
+    Transaction.prototype.signMultipleTransactions = function (txInputData, privateKey, callback) {
+        var _this = this;
+        if (!privateKey) {
             if (typeof callback === 'function') {
                 callback(new Error("Can not use the PIN."), null);
             }
@@ -3917,13 +4025,13 @@ var Transaction = /** @class */ (function () {
             var txData = txInputData.params[index];
             inputs = txData.tx.inputs;
             console.log(inputs);
-            privKeys = this_1.getAllPrivateKeys(pin, inputs, txData.coinType);
-            if (!privKeys || privKeys.length == 0) {
-                if (typeof callback === 'function') {
-                    //callback(Constant.ERROR_TYPE.INVALID_ADDRESS, null);
-                }
-                return { value: void 0 };
-            }
+            // var privKeys = this.getAllPrivateKeys(privateKey, inputs, txData.coinType);
+            // if (!privKeys || privKeys.length == 0) {
+            //     if (typeof callback === 'function') {
+            //         //callback(Constant.ERROR_TYPE.INVALID_ADDRESS, null);
+            //     }
+            //     return;
+            // }
             try {
                 validateTx = txData;
                 //var network = txInputData.network;
@@ -3932,8 +4040,8 @@ var Transaction = /** @class */ (function () {
                 validateTx.pubkeys = [];
                 validateTx.signatures = [];
                 validateTx.tosign.map(function (tosign, index) {
-                    var privateKey = privKeys[index];
-                    var sign = this.signTxMessage(tosign, privateKey, net_2);
+                    //var privateKey = privKeys[index];
+                    var sign = _this.signTxMessage(tosign, privateKey, net_2);
                     console.log('Sign: ' + sign);
                     validateTx.pubkeys.push(sign.publicKey);
                     validateTx.signatures.push(sign.signature);
@@ -3944,7 +4052,7 @@ var Transaction = /** @class */ (function () {
                     }
                     return { value: void 0 };
                 }
-                result_data.push(JSON.stringify(validateTx));
+                result_data.push(validateTx);
             }
             catch (error) {
                 if (typeof callback === 'function') {
@@ -3952,7 +4060,7 @@ var Transaction = /** @class */ (function () {
                 }
             }
         };
-        var this_1 = this, inputs, privKeys, validateTx;
+        var inputs, validateTx;
         for (var index = 0; index < txInputData.params.length; ++index) {
             var state_1 = _loop_1(index);
             if (typeof state_1 === "object")

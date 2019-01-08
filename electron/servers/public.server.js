@@ -177,7 +177,7 @@ function createServer() {
 
   app.route('/address-book')
     .get((req, res, next) => {
-      
+
       let currentWindow = this.getWindow()
       currentWindow.webContents.send("get-addressbook", null)
       ipcMain.once("get-addressbook-callback", (event, arg) => {
@@ -196,29 +196,29 @@ function createServer() {
         });
       })
     })
-    // .post((req, res, next) => {
-    //   // console.log(req.body);
-    //   let data = req.body;
-    //   let response_data = {
-    //     status: "ERROR",
-    //     error: ERRORS.INTERNAL_ERROR
-    //   };
+  // .post((req, res, next) => {
+  //   // console.log(req.body);
+  //   let data = req.body;
+  //   let response_data = {
+  //     status: "ERROR",
+  //     error: ERRORS.INTERNAL_ERROR
+  //   };
 
-    //   address_book.add(data).then(function (info) {
-    //     response_data = {
-    //       status: "SUCCESS",
-    //       data: address_book.get(),
-    //       error: null
-    //     };
-    //     res.send({
-    //       result: response_data
-    //     });
-    //   }, function (err) {
-    //     res.send({
-    //       result: response_data
-    //     });
-    //   });
-    // });
+  //   address_book.add(data).then(function (info) {
+  //     response_data = {
+  //       status: "SUCCESS",
+  //       data: address_book.get(),
+  //       error: null
+  //     };
+  //     res.send({
+  //       result: response_data
+  //     });
+  //   }, function (err) {
+  //     res.send({
+  //       result: response_data
+  //     });
+  //   });
+  // });
 
   // app.get('/address-book/find', (req, res, next) => {
   //   let response_data = {
@@ -321,8 +321,7 @@ function createServer() {
     //     result: response_data
     //   });
     // }); 
-    let self = this
-    let currentWindow = self.getWindow()
+    let currentWindow = this.getWindow()
 
     currentWindow.show()
     currentWindow.focus()
@@ -330,42 +329,50 @@ function createServer() {
 
     ipcMain.once("send-transaction-callback", (event, arg) => {
       res.send({
-        result: JSON.parse(arg)
+        result: {
+          status: "SUCCESS",
+          data: JSON.parse(arg),
+          error: null
+        }
       });
-      self.hideApp()
+      this.hideApp()
     })
   });
 
-  // app.get('/transaction/txstatus', (req, res, next) => {
-  //   let txhash = req.query.txhash;
-  //   let response_data = {
-  //     status: "ERROR",
-  //     error: ERRORS.INVALID_REQUEST
-  //   };
+  app.get('/transaction/txstatus', (req, res, next) => {
+    let txhash = req.query.txhash;
+    let response_data = {
+      status: "ERROR",
+      error: ERRORS.INVALID_REQUEST
+    };
 
-  //   if (!txhash) {
-  //     res.send({
-  //       result: response_data
-  //     });
-  //     return;
-  //   }
+    if (!txhash) {
+      res.send({
+        result: response_data
+      });
+      return;
+    }
 
-  //   services.getTxHashStatus(txhash).then(function (data) {
-  //     response_data = {
-  //       status: "SUCCESS",
-  //       data: data,
-  //       error: null
-  //     };
-  //     res.send({
-  //       result: response_data
-  //     });
-  //   }, function (err) {
-  //     response_data.error = err;
-  //     res.send({
-  //       result: response_data
-  //     });
-  //   });
-  // });
+    let currentWindow = this.getWindow()
+    currentWindow.webContents.send("get-transaction-status", {
+      txhash: txhash
+    })
+
+    ipcMain.once("get-transaction-status-callback", (event, arg) => {
+      res.send({
+        result: {
+          status: "SUCCESS",
+          data: JSON.parse(arg),
+          error: null
+        }
+      });
+    }, function (err) {
+      response_data.error = err;
+      res.send({
+        result: response_data
+      });
+    });
+  });
 
   // app.get('/store/info', (req, res, next) => {
   //   let response_data = {
@@ -411,73 +418,83 @@ function createServer() {
   //   });
   // });
 
-  app.route('/store/air-drop')
-    .post((req, res, next) => {
-      let event_data = req.body;
-      event_data.stayIn = 0;
+  app.post('/store/air-drop', (req, res, next) => {
+    let event_data = req.body;
+    event_data.stayIn = 0;
 
-      /*
-      {
-        "airdropFreq": 0,
-        "appliedDateOfWeek": [
-          0
-        ],
-        "beaconInfoId": 0,
-        "hourOfDayFrom": 0,
-        "hourOfDayTo": 0,
-        "mozoAirdropPerCustomerVisit": 0,
-        "name": "string",
-        "periodFromDate": 0,
-        "periodToDate": 0,
-        "stayIn": 0,
-        "totalNumMozoOffchain": 0
-      }
-      */
-      let response_data = {
-        status: "ERROR",
-        error: ERRORS.INTERNAL_ERROR
-      };
-      store.createAirDropEvent(event_data).then(function (info) {
-        store.confirmTransaction(info, res);
-      }, function (err) {
-        res.send({
-          result: "ERROR",
-          error: response_data
+    console.log("event_data", event_data)
 
-        });
-      });
+    /*
+    {
+      "airdropFreq": 0,
+      "appliedDateOfWeek": [
+        0
+      ],
+      "beaconInfoId": 0,
+      "hourOfDayFrom": 0,
+      "hourOfDayTo": 0,
+      "mozoAirdropPerCustomerVisit": 0,
+      "name": "string",
+      "periodFromDate": 0,
+      "periodToDate": 0,
+      "stayIn": 0,
+      "totalNumMozoOffchain": 0
+    }
+    */
+    // let response_data = {
+    //   status: "ERROR",
+    //   error: ERRORS.INTERNAL_ERROR
+    // };
 
-    })
-    .get((req, res, next) => {
-      let response_data = {
-        status: "ERROR",
-        data: null,
-        error: ERRORS.INTERNAL_ERROR
-      };
+    let currentWindow = this.getWindow()
 
-      let request_data = req.query;
-      log.debug(request_data);
+    currentWindow.show()
+    currentWindow.focus()
+    currentWindow.webContents.send("send-transaction-airdrop", event_data)
 
-      store.airdrop.get(request_data).then(function (info) {
-        response_data = {
+    ipcMain.once("send-transaction-airdrop-callback", (event, arg) => {
+      res.send({
+        result: {
           status: "SUCCESS",
-          data: info.data,
+          data: JSON.parse(arg),
           error: null
-        };
-        let headers = info.headers;
-        for (let header_key in headers) {
-          res.header(header_key, headers[header_key]);
         }
-        res.send({
-          result: response_data
-        });
-      }, function (err) {
-        response_data.error = err
-        res.send({
-          result: response_data
-        });
+      });
+      this.hideApp()
+    })
+  })
+
+  app.get('/store/air-drop', (req, res, next) => {
+    let response_data = {
+      status: "ERROR",
+      data: null,
+      error: ERRORS.INTERNAL_ERROR
+    };
+
+    let request_data = req.query;
+    log.debug(request_data);
+
+    store.airdrop.get(request_data).then(function (info) {
+      response_data = {
+        status: "SUCCESS",
+        data: info.data,
+        error: null
+      };
+      let headers = info.headers;
+      for (let header_key in headers) {
+        res.header(header_key, headers[header_key]);
+      }
+      res.send({
+        result: response_data
+      });
+    }, function (err) {
+      response_data.error = err
+      res.send({
+        result: response_data
       });
     });
+  });
+
 
   // app.get('/store/check_airdrop_status', (req, res, next) => {
   //   let txhash = req.query.txhash;

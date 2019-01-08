@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { TabsPageRoutingModule } from './tabs.router.module';
 
 import { TabsPage } from './tabs.page';
-import { ContactPageModule } from '../contact/contact.module';
+import { TransactionPageModule } from '../transaction/transaction.module';
 import { AboutPageModule } from '../about/about.module';
 import { MyWalletPageModule } from '../my-wallet/my-wallet.module';
 import { SettingPageModule } from '../setting/setting.module';
@@ -21,7 +21,7 @@ import { SettingPageModule } from '../setting/setting.module';
     MyWalletPageModule,
     SettingPageModule,
     AboutPageModule,
-    ContactPageModule
+    TransactionPageModule
   ],
   declarations: [TabsPage]
 })
