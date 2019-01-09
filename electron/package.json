@@ -1,11 +1,13 @@
 {
-  "name": "capacitor-app",
+  "name": "mozox",
   "version": "1.0.0",
-  "description": "An Amazing Capacitor App",
+  "description": "Mozo X wallet desktop App",
   "main": "index.js",
   "scripts": {
     "electron:start": "electron ./",
     "build:mac": "build --mac",
+    "build:linux": "build --linux",
+    "build:win": "build --win",
     "postinstall": "install-app-deps"
   },
   "dependencies": {
@@ -22,6 +24,44 @@
     "capacitor",
     "electron"
   ],
-  "author": "",
-  "license": "ISC"
+  "author": {
+    "name": "Biglabs",
+    "email": "developer@mozocoin.io"
+  },
+  "license": "ISC",
+  "build": {
+    "appId": "mozowallet.biglabs.com",
+    "asar": true,
+    "compression": "store",
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "artifactName": "${productName}_${version}_${arch}.${ext}",
+      "oneClick": false,
+      "perMachine": false,
+      "deleteAppDataOnUninstall": true
+    },
+    "mac": {
+      "category": "mozowallet.biglabs.com"
+    },
+    "linux": {
+      "target": "deb",
+      "category": "Internet"
+    },
+    "protocols": {
+      "name": "solosigner",
+      "schemes": [
+        "solosigner"
+      ]
+    }
+  }
 }
