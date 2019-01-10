@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, AfterContentInit } from '@angular/core';
 import { InfiniteScroll } from '@ionic/angular';
 import { HttpResponse } from "@angular/common/http";
 import { MozoService } from '../../services/mozo.service'
@@ -9,7 +9,7 @@ import { AppGlobals } from '../../app.globals'
   templateUrl: 'transaction.page.html',
   styleUrls: ['transaction.page.scss']
 })
-export class TransactionPage {
+export class TransactionPage implements AfterContentInit {
   @ViewChild(InfiniteScroll) infiniteScroll: InfiniteScroll;
   constructor(
     private mozoService: MozoService,
@@ -21,17 +21,16 @@ export class TransactionPage {
   loading: boolean = true
   address: string = ''
 
-  data: any = [];
-  users: string[];
+  transactionData: any = [];
   errorMessage: string;
   page = 1;
   perPage = 20;
 
   getTransactions(event?) {
-    this.mozoService.getTransactions(this.appGlobals.address, { page: this.page, size: this.perPage}).subscribe((res: HttpResponse<any>) => {
+    this.mozoService.getTransactions(this.appGlobals.address, { page: this.page, size: this.perPage }).subscribe((res: HttpResponse<any>) => {
       let dataRes = res.body;
       this.loading = false
-      this.data = [...this.data, ...res.body]
+      this.transactionData = [...this.transactionData, ...res.body]
 
       this.page += 1
 
@@ -104,5 +103,13 @@ export class TransactionPage {
   // toggleInfiniteScroll() {
   //   this.infiniteScroll.disabled = !this.infiniteScroll.disabled;
   // }
+
+  ngAfterContentInit() {
+    
+    // console.log("containner 1", containner)
+
+    // console.log("containner 2", containner.shadowRoot.querySelector('style'))
+    // new SimpleBar(document.querySelector('.ion-content-test'), { autoHide: true })
+  }
 
 }

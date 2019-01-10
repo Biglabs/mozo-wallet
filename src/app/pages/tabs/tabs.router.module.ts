@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { TabsPage } from './tabs.page';
 import { MyWalletPage } from '../my-wallet/my-wallet.page';
-import { AboutPage } from '../about/about.page';
+import { AddressBookPage } from '../address-book/address-book.page';
 import { TransactionPage } from '../transaction/transaction.page';
 import { SettingPage } from '../setting/setting.page';
 
@@ -18,9 +18,9 @@ const routes: Routes = [
         component: MyWalletPage
       },
       {
-        path: 'about',
-        outlet: 'about',
-        component: AboutPage
+        path: 'address-book',
+        outlet: 'address-book',
+        component: AddressBookPage
       },
       {
         path: 'transaction',

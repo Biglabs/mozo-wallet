@@ -5,60 +5,63 @@
     </ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-content padding>
+<ion-content scrollContent class="ion-content-test" padding>
   <loading top="35%" *ngIf="loading; else loadingComplate"></loading>
   <ng-template #loadingComplate>
-    <ion-grid class="fixed-container" no-padding slot="fixed">
+    <ion-grid fixed="true" no-padding class="fixed-container">
       <ion-row no-padding>
         <ion-col no-padding>
-          <ion-button size="small" margin-end-xs large-radius expand="block">All</ion-button>
+          <ion-button size="small" large-radius expand="block">All</ion-button>
         </ion-col>
         <ion-col no-padding>
-          <ion-button color="light" size="small" margin-end-xs large-radius expand="block">Received</ion-button>
+          <ion-button color="light" size="small" large-radius expand="block">Received</ion-button>
         </ion-col>
         <ion-col no-padding>
-          <ion-button color="light" size="small" margin-end-xs large-radius expand="block">Sent</ion-button>
+          <ion-button color="light" size="small" large-radius expand="block">Sent</ion-button>
         </ion-col>
       </ion-row>
     </ion-grid>
-    <ion-list class="transaction-list">
-      <ng-container *ngFor="let item of data">
-        <ion-item mode="md" *ngIf="item.addressTo.toLowerCase() != address.toLowerCase(); else elseBlock" no-inner-end
-          no-padding lines="full">
-          <ion-icon size="large" slot="start" src="assets/svg/send.svg"></ion-icon>
-          <ion-label color="dark" text-wrap>
-            <h3>Sent</h3>
-            <small><i>
-                <ion-text color="medium">To Store - {{item.time * 1000 | date:'hh:mm MMM d, y'}}</ion-text>
-              </i></small>
-          </ion-label>
-          <label slot="end">
-            <ion-text>-{{item.amount / 100 | number}}</ion-text><br />
-            <!-- <small><i>300</i></small> -->
-          </label>
-        </ion-item>
-        <ng-template #elseBlock>
-          <ion-item mode="md" *ngIf="item; else elseBlock" no-inner-end no-padding lines="full">
-            <ion-icon size="large" slot="start" src="assets/svg/receive.svg"></ion-icon>
-            <ion-label color="dark" text-wrap>
-              <h3>Received</h3>
-              <small><i>
-                  <ion-text color="medium">From Store - {{item.time * 1000 | date:'hh:mm MMM d, y'}}</ion-text>
-                </i></small>
-            </ion-label>
-            <label slot="end">
-              <ion-text color="primary">+{{item.amount / 100 | number}}</ion-text><br />
-              <!-- <small><i>300</i></small> -->
-            </label>
-          </ion-item>
-        </ng-template>
-      </ng-container>
-
-      <!-- <ion-item *ngFor="let item of data">
-      <span slot="start" class="dot"></span>
-      <ion-label>{{item.contractAddress}}</ion-label>
-    </ion-item> -->
-    </ion-list>
+    <div class="scroll-content">
+        <ion-list class="transaction-list">
+            <ng-container *ngFor="let item of transactionData">
+              <ion-item mode="md" *ngIf="item.addressTo.toLowerCase() != address.toLowerCase(); else elseBlock" no-inner-end
+                no-padding lines="full">
+                <ion-icon size="large" slot="start" src="assets/svg/send.svg"></ion-icon>
+                <ion-label color="medium" text-wrap>
+                  <h3>Sent</h3>
+                  <small><i>
+                      <ion-text color="medium">To Store - {{item.time * 1000 | date:'hh:mm MMM d, y'}}</ion-text>
+                    </i></small>
+                </ion-label>
+                <label slot="end">
+                  <ion-text>-{{item.amount / 100 | number}}</ion-text><br />
+                  <!-- <small><i>300</i></small> -->
+                </label>
+              </ion-item>
+              <ng-template #elseBlock>
+                <ion-item mode="md" *ngIf="item; else elseBlock" no-inner-end no-padding lines="full">
+                  <ion-icon size="large" slot="start" src="assets/svg/receive.svg"></ion-icon>
+                  <ion-label color="medium" text-wrap>
+                    <h3>Received</h3>
+                    <small><i>
+                        <ion-text color="medium">From Store - {{item.time * 1000 | date:'hh:mm MMM d, y'}}</ion-text>
+                      </i></small>
+                  </ion-label>
+                  <label slot="end">
+                    <ion-text color="primary">+{{item.amount / 100 | number}}</ion-text><br />
+                    <!-- <small><i>300</i></small> -->
+                  </label>
+                </ion-item>
+              </ng-template>
+            </ng-container>
+      
+            <!-- <ion-item *ngFor="let item of data">
+            <span slot="start" class="dot"></span>
+            <ion-label>{{item.contractAddress}}</ion-label>
+          </ion-item> -->
+          </ion-list>
+    </div>
+    
     <ion-infinite-scroll threshold="100px" (ionInfinite)="getTransactions($event)">
       <ion-infinite-scroll-content class="custom-spinner" loadingSpinner="dots" loadingText="Loading more data...">
       </ion-infinite-scroll-content>

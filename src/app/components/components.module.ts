@@ -5,23 +5,27 @@ import { IonicModule } from '@ionic/angular';
 import { LogoComponent } from './logo/logo.component';
 import { PinCodeComponent } from './pin-code/pin-code.component';
 import { LoadingComponent } from './loading/loading.component';
+import { ScrollContentDirective } from './scroll-container/scroll-container.directive';
+
 
 @NgModule({
-  declarations: [
-    LogoComponent,
-    PinCodeComponent,
-    LoadingComponent
-  ],
   imports: [
     CommonModule, 
     IonicModule
+  ],
+  declarations: [
+    LogoComponent,
+    PinCodeComponent,
+    LoadingComponent,
+    ScrollContentDirective
   ],
   exports: [
     CommonModule, 
     IonicModule,
     LogoComponent,
     PinCodeComponent,
-    LoadingComponent
+    LoadingComponent,
+    ScrollContentDirective
   ]
 })
 export class ComponentsModule {}

@@ -1,0 +1,27 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title text-center>
+      <app-logo></app-logo>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content padding>
+  <loading top="35%" *ngIf="loading; else loadingComplate"></loading>
+  <ng-template #loadingComplate>
+    <ion-toolbar class="fixed-container" no-padding>
+      <ion-searchbar></ion-searchbar>
+    </ion-toolbar>
+    <div class="scroll-content">
+      <ion-list class="transaction-list">
+        <ion-item mode="md" *ngFor="let item of addressBookData" no-inner-end no-padding lines="full">
+          <ion-label color="dark" text-wrap>
+            <h3>{{item.name}}</h3>
+            <small>
+              <ion-text color="medium">{{item.soloAddress}}</ion-text>
+            </small>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </div>
+  </ng-template>
+</ion-content>

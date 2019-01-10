@@ -8,7 +8,7 @@ import { TabsPageRoutingModule } from './tabs.router.module';
 
 import { TabsPage } from './tabs.page';
 import { TransactionPageModule } from '../transaction/transaction.module';
-import { AboutPageModule } from '../about/about.module';
+import { AddressBookPageModule } from '../address-book/address-book.module';
 import { MyWalletPageModule } from '../my-wallet/my-wallet.module';
 import { SettingPageModule } from '../setting/setting.module';
 
@@ -20,7 +20,7 @@ import { SettingPageModule } from '../setting/setting.module';
     TabsPageRoutingModule,
     MyWalletPageModule,
     SettingPageModule,
-    AboutPageModule,
+    AddressBookPageModule,
     TransactionPageModule
   ],
   declarations: [TabsPage]

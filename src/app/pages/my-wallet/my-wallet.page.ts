@@ -13,6 +13,8 @@ import { AppGlobals } from '../../app.globals'
 export class MyWalletPage implements OnInit {
   address: string = null
   balance: number = 0
+  loading: boolean = true
+  
   constructor(
     private nav: NavController,
     private mozoService: MozoService,
@@ -38,6 +40,64 @@ export class MyWalletPage implements OnInit {
     console.log("my wallet 2")
   }
 
+  transactionData: any = [];
+  errorMessage: string;
+  page = 1;
+  perPage = 20;
+
+  getTransactions(event?) {
+    this.mozoService.getTransactions(this.appGlobals.address, { page: this.page, size: this.perPage}).subscribe((res: HttpResponse<any>) => {
+      let dataRes = res.body;
+      this.loading = false
+      this.transactionData = [...this.transactionData, ...res.body]
+
+      this.page += 1
+
+      event && event.target.complete();
+
+      if (dataRes.length < this.perPage && event) {
+        event.target.disabled = true;
+      }
+
+
+      // let txhistory = JSON.parse(body);
+      //     txhistory = R.map(x => {
+      //       if (x.decimal) {
+      //         x.amount /= Math.pow(10, x.decimal);
+      //       }
+      //       x.exchange_rates = R.map(y => {
+      //         let exchange_rate_data = userReference.get(network + "_" + y);
+      //         if (exchange_rate_data) {
+      //           return {
+      //             currency : exchange_rate_data.currency,
+      //             value: x.amount * exchange_rate_data.rate
+      //           };
+      //         }
+      //       }, CONSTANTS.CURRENCY_EXCHANGE_RATE);
+
+      //       x.address_book_name = null;
+      //       x.addressFrom = x.addressFrom.toLowerCase();
+      //       x.addressTo = x.addressTo.toLowerCase();
+      //       let address_book_data = address_book.get();
+      //       let temp_address_book_data = null;
+      //       if (address_book_data) {
+      //         for (var index = 0; index < address_book_data.length; ++index) {
+      //           temp_address_book_data =
+      //             address_book_data[index].soloAddress.toLowerCase();
+      //           if (x.addressFrom == temp_address_book_data ||
+      //               x.addressTo == temp_address_book_data) {
+      //             x.address_book_name = address_book_data[index].name;
+      //             break;
+      //           }
+      //         }
+      //       }
+      //       return x;
+      //     }, txhistory);
+      //     resolve(txhistory);
+    },
+      error => this.errorMessage = <any>error);
+  }
+
   ngOnInit() {
     console.log("my wallet")
     this.address = this.appGlobals.address
@@ -52,5 +112,7 @@ export class MyWalletPage implements OnInit {
     }, (error) => {
        
     })
+
+    this.getTransactions()
   }
 }

@@ -183,6 +183,10 @@ h3.label,
     margin-right: 4px !important;
 }
 
+[margin-end-lg] {
+    margin-right: 10px !important;
+}
+
 [margin-start-xs] {
     margin-left: 4px !important;
 }
@@ -242,11 +246,7 @@ ion-item[input-icon] {
 :root {
 
     ion-content {
-        .inner-scroll {
-            &::-webkit-scrollbar {
-                width: 5px;
-            }
-        }
+        contain: none;
     }
 
     [shadow]:not(.button-disabled) {
@@ -308,4 +308,13 @@ ion-item[input-icon] {
 .custom-spinner:host svg,
 .infinite-loading-spinner svg {
     transform-origin: center !important;
+}
+
+.fixed-container {
+    top: 50px;
+    left: 0;
+    position: fixed;
+    background-color: #fff;
+    z-index: 1;
+    width: calc(100% - var(--scrollbar-width));
 }
