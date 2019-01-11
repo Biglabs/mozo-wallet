@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { ModalController } from '@ionic/angular';
 import { SendConfirmPage } from '../send-confirm/send-confirm.page';
-import { FormBuilder, Validators, FormControl } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { MozoService } from '../../services/mozo.service'
@@ -56,7 +56,7 @@ export class SendPage implements OnInit {
         this.filteredOptions = this.formModel.controls['toAddress'].valueChanges
           .pipe(
             startWith(''),
-            map(value => this._filter(value))
+            map(value => this.filter(value))
           );
       }
 
@@ -67,7 +67,7 @@ export class SendPage implements OnInit {
     })
   }
 
-  private _filter(value: string): [any] {
+  private filter(value: string): [any] {
     const filterValue = value.toLowerCase();
     return this.options.filter(option => option.name.toLowerCase().includes(filterValue) || option.soloAddress.includes(filterValue));
   }

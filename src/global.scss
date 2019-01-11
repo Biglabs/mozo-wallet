@@ -318,3 +318,7 @@ ion-item[input-icon] {
     z-index: 1;
     width: calc(100% - var(--scrollbar-width));
 }
+
+[fw-6] {
+    font-weight: 600;
+}
