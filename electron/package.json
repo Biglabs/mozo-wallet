@@ -31,8 +31,6 @@
   "license": "ISC",
   "build": {
     "appId": "mozowallet.biglabs.com",
-    "asar": true,
-    "compression": "store",
     "win": {
       "target": [
         {
