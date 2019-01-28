@@ -9,7 +9,7 @@
   <loading top="35%" *ngIf="loading; else loadingComplate"></loading>
   <ng-template #loadingComplate>
     <ion-toolbar class="fixed-container" no-padding>
-      <ion-searchbar [(ngModel)]="queryText" (ionChange)="updateAddress()"></ion-searchbar>
+      <ion-searchbar animated [(ngModel)]="queryText" (ionChange)="updateAddress()"></ion-searchbar>
     </ion-toolbar>
     <ion-list class="transaction-list">
       <!-- <ion-item mode="md" *ngFor="let item of addressBookData" no-inner-end no-padding lines="full">

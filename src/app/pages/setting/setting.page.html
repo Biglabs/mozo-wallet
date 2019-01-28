@@ -1,9 +1,55 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title text-center><app-logo></app-logo></ion-title>
+    <ion-title text-center>
+      <app-logo></app-logo>
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content padding>
-  <ion-button *ngIf="true" (click)="onLogout()">Logout</ion-button>
+  <ion-list>
+    <ion-item mode="md" no-inner-end no-padding lines="full">
+      <ion-icon slot="start" src="assets/svg/send.svg"></ion-icon>
+      <ion-label text-wrap>
+        <ion-text>Languages</ion-text>
+        <!-- <small><i>
+              <ion-text color="medium">To Store - ssssss</ion-text>
+            </i></small> -->
+      </ion-label>
+      <label  slot="end">
+        <ion-text color="medium">English</ion-text>
+      </label>
+    </ion-item>
+    <ion-item mode="md" no-inner-end no-padding lines="full">
+      <ion-icon slot="start" src="assets/svg/send.svg"></ion-icon>
+      <ion-label text-wrap>
+        <ion-text>wwwww</ion-text>
+        <!-- <small><i>
+                <ion-text color="medium">To Store - ssssss</ion-text>
+              </i></small> -->
+      </ion-label>
+      <label slot="end">
+        <ion-text color="medium">wwwww</ion-text>
+      </label>
+    </ion-item>
+    <ion-item mode="md" no-inner-end no-padding lines="full">
+      <ion-icon slot="start" src="assets/svg/send.svg"></ion-icon>
+      <ion-label text-wrap>
+        <ion-text>wwwww</ion-text>
+        <!-- <small><i>
+                  <ion-text color="medium">To Store - ssssss</ion-text>
+                </i></small> -->
+      </ion-label>
+      <label slot="end">
+        <ion-text color="medium">wwwww</ion-text>
+      </label>
+    </ion-item>
+    <ion-item (click)="onLogout()" mode="md" no-inner-end no-padding lines="full">
+      <ion-icon slot="start" src="assets/svg/send.svg"></ion-icon>
+      <ion-label text-wrap>
+        <ion-text>Logout</ion-text>
+      </ion-label>
+     
+    </ion-item>
+  </ion-list>
 </ion-content>

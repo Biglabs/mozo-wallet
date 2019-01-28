@@ -101,7 +101,7 @@ export class AppComponent {
               airdropData.totalNumMozoOffchain *= 100;
 
               const sendCreateAirdrop = () => {
-                this.mozoService.createAirDropEvent(airdropData).subscribe( async (res: HttpResponse<any>) => {
+                this.mozoService.createAirDropEvent(airdropData).subscribe(async (res: HttpResponse<any>) => {
                   const data = res.body;
                   if (data) {
                     let txData = {
@@ -118,11 +118,11 @@ export class AppComponent {
                       component: SendConfirmPage,
                       componentProps: { value: 123 }
                     });
-  
+
                     return await modal.present();
                   }
 
-                 
+
                 }, (error) => {
 
                 })
@@ -169,6 +169,31 @@ export class AppComponent {
                 const data = res.body;
                 electron.ipcRenderer.send("get-transaction-status-callback", JSON.stringify(res.body))
                 console.log("data balance ", data)
+
+              }, (error) => {
+
+              })
+            })
+
+            electron.ipcRenderer.on("get-transaction-history", async (event, arg) => {
+              this.mozoService.getTransactions(this.appGlobals.address, { page: arg.page, size: arg.size }).subscribe((res: HttpResponse<any>) => {
+                const data = res.body;
+
+                let txhistory = [];
+                data.map(x => {
+                  if (x.decimal) {
+                    x.amount /= Math.pow(10, x.decimal);
+                  }
+                  x.exchange_rates = [null]
+
+                  x.address_book_name = null;
+
+                  txhistory.push(x)
+                  
+                });
+
+                electron.ipcRenderer.send("get-transaction-history-callback", JSON.stringify(txhistory))
+                console.log("data balance ", txhistory)
 
               }, (error) => {
 

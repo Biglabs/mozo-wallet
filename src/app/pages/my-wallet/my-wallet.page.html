@@ -16,11 +16,13 @@
           <ion-card-title>{{balance | number}}</ion-card-title>
         </ion-item>
         <ion-card-subtitle>₩102.230</ion-card-subtitle>
+        <qrcode class="qr-code-wallet" [qrdata]="address"></qrcode>
         <p>
           <ion-label>Wallet Address</ion-label><br />
           <small>{{address}}</small>
         </p>
       </ion-card-header>
+      
     </ion-card>
     <ion-grid>
       <ion-row>

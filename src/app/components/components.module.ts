@@ -6,6 +6,7 @@ import { LogoComponent } from './logo/logo.component';
 import { PinCodeComponent } from './pin-code/pin-code.component';
 import { LoadingComponent } from './loading/loading.component';
 import { ScrollContentDirective } from './scroll-container/scroll-container.directive';
+import { QRCodeModule } from 'angularx-qrcode';
 
 
 @NgModule({
@@ -25,7 +26,8 @@ import { ScrollContentDirective } from './scroll-container/scroll-container.dire
     LogoComponent,
     PinCodeComponent,
     LoadingComponent,
-    ScrollContentDirective
+    ScrollContentDirective,
+    QRCodeModule
   ]
 })
 export class ComponentsModule {}

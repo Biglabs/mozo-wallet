@@ -78,38 +78,7 @@ export class TransactionPage implements AfterContentInit {
     },
       error => this.errorMessage = <any>error);
   }
-
-  // doInfinite(infiniteScroll) {
-  //   this.page = this.page+1;
-  //   setTimeout(() => {
-  //     this.restApi.getUsers(this.page)
-  //        .subscribe(
-  //          res => {
-  //            this.data = res;
-  //            this.perPage = this.data.per_page;
-  //            this.totalData = this.data.total;
-  //            this.totalPage = this.data.total_pages;
-  //            for(let i=0; i<this.data.data.length; i++) {
-  //              this.users.push(this.data.data[i]);
-  //            }
-  //          },
-  //          error =>  this.errorMessage = <any>error);
-
-  //     console.log('Async operation has ended');
-  //     infiniteScroll.complete();
-  //   }, 1000);
-  // }
-
-  // toggleInfiniteScroll() {
-  //   this.infiniteScroll.disabled = !this.infiniteScroll.disabled;
-  // }
-
   ngAfterContentInit() {
     
-    // console.log("containner 1", containner)
-
-    // console.log("containner 2", containner.shadowRoot.querySelector('style'))
-    // new SimpleBar(document.querySelector('.ion-content-test'), { autoHide: true })
   }
-
 }

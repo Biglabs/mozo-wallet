@@ -10,6 +10,8 @@ const {
   remote
 } = require('electron');
 
+const store = require("./_store")
+
 function createServer() {
 
   const app = express()
@@ -241,44 +243,65 @@ function createServer() {
   //   });
   // });
 
-  // app.get('/getTxHistory', (req, res, next) => {
-  //   let response_data = {
-  //     status: "ERROR",
-  //     error: ERRORS.NO_WALLET
-  //   };
+  app.get('/getTxHistory', (req, res, next) => {
+    let response_data = {
+      status: "ERROR",
+      error: ERRORS.NO_WALLET
+    };
 
-  //   let addr_network = req.query.network;
-  //   if (!addr_network) {
-  //     response_data.error = ERRORS.NO_WALLET_NETWORK;
-  //     res.send({
-  //       result: response_data
-  //     });
-  //     return;
-  //   }
+    let addr_network = req.query.network;
+    if (!addr_network) {
+      response_data.error = ERRORS.NO_WALLET_NETWORK;
+      res.send({
+        result: response_data
+      });
+      return;
+    }
 
-  //   let page_num = req.query.page ? req.query.page : 1;
-  //   let size_num = req.query.size ? req.query.size : 15;
+    let page_num = req.query.page ? req.query.page : 1;
+    let size_num = req.query.size ? req.query.size : 15;
 
-  //   services.getTransactionHistory(
-  //     addr_network, page_num, size_num).then(function (txhistory) {
-  //     // console.log("TX history length: " + txhistory.length);
-  //     if (txhistory) {
-  //       response_data = {
-  //         status: "SUCCESS",
-  //         data: txhistory,
-  //         error: null
-  //       };
-  //     }
-  //     res.send({
-  //       result: response_data
-  //     });
-  //   }, function (err) {
-  //     response_data.error = ERRORS.INTERNAL_ERROR;
-  //     res.send({
-  //       result: response_data
-  //     });
-  //   });
-  // });
+    let currentWindow = this.getWindow()
+    currentWindow.webContents.send("get-transaction-history", {
+      page: page_num,
+      size: size_num
+    })
+
+    ipcMain.once("get-transaction-history-callback", (event, arg) => {
+      res.send({
+        result: {
+          status: "SUCCESS",
+          data: JSON.parse(arg),
+          error: null
+        }
+      });
+    }, function (err) {
+      response_data.error = err;
+      res.send({
+        result: response_data
+      });
+    });
+
+    // services.getTransactionHistory(
+    //   addr_network, page_num, size_num).then(function (txhistory) {
+    //   // console.log("TX history length: " + txhistory.length);
+    //   if (txhistory) {
+    //     response_data = {
+    //       status: "SUCCESS",
+    //       data: txhistory,
+    //       error: null
+    //     };
+    //   }
+    //   res.send({
+    //     result: response_data
+    //   });
+    // }, function (err) {
+    //   response_data.error = ERRORS.INTERNAL_ERROR;
+    //   res.send({
+    //     result: response_data
+    //   });
+    // });
+  });
 
   app.post('/transaction/send', (req, res, next) => {
     let tx_send_data = req.body;
@@ -374,49 +397,50 @@ function createServer() {
     });
   });
 
-  // app.get('/store/info', (req, res, next) => {
-  //   let response_data = {
-  //     status: "ERROR",
-  //     error: ERRORS.NO_WALLET
-  //   };
-  //   store.getStoreInfo().then(function (data) {
-  //     response_data = {
-  //       status: "SUCCESS",
-  //       data: data,
-  //       error: null
-  //     };
-  //     res.send({
-  //       result: response_data
-  //     });
-  //   }, function (err) {
-  //     response_data.error = err;
-  //     res.send({
-  //       result: response_data
-  //     });
-  //   });
-  // });
+  app.get('/store/info', (req, res, next) => {
+    let response_data = {
+      status: "ERROR",
+      error: ERRORS.NO_WALLET
+    };
+    
+    store.getStoreInfo().then(function (data) {
+      response_data = {
+        status: "SUCCESS",
+        data: data,
+        error: null
+      };
+      res.send({
+        result: response_data
+      });
+    }, function (err) {
+      response_data.error = err;
+      res.send({
+        result: response_data
+      });
+    });
+  });
 
-  // app.get('/store/beacon', (req, res, next) => {
-  //   let response_data = {
-  //     status: "ERROR",
-  //     error: ERRORS.NO_WALLET
-  //   };
-  //   store.beacon.get().then(function (data) {
-  //     response_data = {
-  //       status: "SUCCESS",
-  //       data: data,
-  //       error: null
-  //     };
-  //     res.send({
-  //       result: response_data
-  //     });
-  //   }, function (err) {
-  //     response_data.error = err;
-  //     res.send({
-  //       result: response_data
-  //     });
-  //   });
-  // });
+  app.get('/store/beacon', (req, res, next) => {
+    let response_data = {
+      status: "ERROR",
+      error: ERRORS.NO_WALLET
+    };
+    store.beacon.get().then(function (data) {
+      response_data = {
+        status: "SUCCESS",
+        data: data,
+        error: null
+      };
+      res.send({
+        result: response_data
+      });
+    }, function (err) {
+      response_data.error = err;
+      res.send({
+        result: response_data
+      });
+    });
+  });
 
   app.post('/store/air-drop', (req, res, next) => {
     let event_data = req.body;
@@ -472,7 +496,9 @@ function createServer() {
     };
 
     let request_data = req.query;
-    log.debug(request_data);
+    //log.debug(request_data);
+
+    console.log("request_data", store)
 
     store.airdrop.get(request_data).then(function (info) {
       response_data = {
@@ -496,36 +522,36 @@ function createServer() {
   });
 
 
-  // app.get('/store/check_airdrop_status', (req, res, next) => {
-  //   let txhash = req.query.txhash;
-  //   let response_data = {
-  //     status: "ERROR",
-  //     error: ERRORS.INVALID_REQUEST
-  //   };
+  app.get('/store/check_airdrop_status', (req, res, next) => {
+    let txhash = req.query.txhash;
+    let response_data = {
+      status: "ERROR",
+      error: ERRORS.INVALID_REQUEST
+    };
 
-  //   if (!txhash) {
-  //     res.send({
-  //       result: response_data
-  //     });
-  //     return;
-  //   }
+    if (!txhash) {
+      res.send({
+        result: response_data
+      });
+      return;
+    }
 
-  //   store.checkSmartContractHash(txhash).then(function (data) {
-  //     response_data = {
-  //       status: "SUCCESS",
-  //       data: data,
-  //       error: null
-  //     };
-  //     res.send({
-  //       result: response_data
-  //     });
-  //   }, function (err) {
-  //     response_data.error = err;
-  //     res.send({
-  //       result: response_data
-  //     });
-  //   });
-  // });
+    store.checkSmartContractHash(txhash).then(function (data) {
+      response_data = {
+        status: "SUCCESS",
+        data: data,
+        error: null
+      };
+      res.send({
+        result: response_data
+      });
+    }, function (err) {
+      response_data.error = err;
+      res.send({
+        result: response_data
+      });
+    });
+  });
 
   app.listen(port, 'localhost', () => {
     console.log("Public Server started")
