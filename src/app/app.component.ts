@@ -102,7 +102,7 @@ export class AppComponent {
 
               const sendCreateAirdrop = () => {
                 this.mozoService.createAirDropEvent(airdropData).subscribe(async (res: HttpResponse<any>) => {
-                  const data = res.body;
+                  const data = res.body.data.items;
                   if (data) {
                     let txData = {
                       type: "ex",
@@ -130,7 +130,7 @@ export class AppComponent {
 
               if (!arg.beaconInfoId) {
                 this.mozoService.getBeacon().subscribe((res: HttpResponse<any>) => {
-                  const data = res.body;
+                  const data = res.body.data.items;
                   arg.beaconInfoId = data[0].id;
                   sendCreateAirdrop()
 
@@ -144,9 +144,10 @@ export class AppComponent {
 
             electron.ipcRenderer.on("get-balance", async (event, arg) => {
               this.mozoService.getBalance(this.appGlobals.address).subscribe((res: HttpResponse<any>) => {
-                const data = res.body;
-                electron.ipcRenderer.send("get-balance-callback", JSON.stringify(res.body))
-                console.log("data balance ", data)
+
+                const data = res.body.data;
+                electron.ipcRenderer.send("get-balance-callback", JSON.stringify(data))
+                console.log("get-balance ", data)
 
               }, (error) => {
 
@@ -155,9 +156,9 @@ export class AppComponent {
 
             electron.ipcRenderer.on("get-addressbook", async (event, arg) => {
               this.mozoService.getAddressBook().subscribe((res: HttpResponse<any>) => {
-                const data = res.body;
-                electron.ipcRenderer.send("get-addressbook-callback", JSON.stringify(res.body))
-                console.log("data balance ", data)
+                const data = res.body.data.items;
+                electron.ipcRenderer.send("get-addressbook-callback", JSON.stringify(data))
+                console.log("get-addressbook ", data)
 
               }, (error) => {
 
@@ -166,9 +167,9 @@ export class AppComponent {
 
             electron.ipcRenderer.on("get-transaction-status", async (event, arg) => {
               this.mozoService.getTransactionStatus(arg.txhash).subscribe((res: HttpResponse<any>) => {
-                const data = res.body;
-                electron.ipcRenderer.send("get-transaction-status-callback", JSON.stringify(res.body))
-                console.log("data balance ", data)
+                const data = res.body.data;
+                electron.ipcRenderer.send("get-transaction-status-callback", JSON.stringify(data))
+                console.log("get-transaction-status ", data)
 
               }, (error) => {
 
@@ -177,7 +178,7 @@ export class AppComponent {
 
             electron.ipcRenderer.on("get-transaction-history", async (event, arg) => {
               this.mozoService.getTransactions(this.appGlobals.address, { page: arg.page, size: arg.size }).subscribe((res: HttpResponse<any>) => {
-                const data = res.body;
+                const data = res.body.data ? res.body.data.items : [];
 
                 let txhistory = [];
                 data.map(x => {
@@ -189,11 +190,11 @@ export class AppComponent {
                   x.address_book_name = null;
 
                   txhistory.push(x)
-                  
+
                 });
 
                 electron.ipcRenderer.send("get-transaction-history-callback", JSON.stringify(txhistory))
-                console.log("data balance ", txhistory)
+                console.log("get-transaction-history ", txhistory)
 
               }, (error) => {
 
@@ -205,7 +206,7 @@ export class AppComponent {
 
 
           this.mozoService.getUserProfile().subscribe((res: HttpResponse<any>) => {
-            const data = res.body;
+            const data = res.body.data;
 
             if (data["walletInfo"]) {
               this.appGlobals.saveEncryptSeedWord(data.walletInfo.encryptSeedPhrase);

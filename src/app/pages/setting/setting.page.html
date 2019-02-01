@@ -7,49 +7,67 @@
 </ion-header>
 
 <ion-content padding>
+  <h5>Settings</h5>
   <ion-list>
     <ion-item mode="md" no-inner-end no-padding lines="full">
-      <ion-icon slot="start" src="assets/svg/send.svg"></ion-icon>
+      <ion-icon size="small" slot="start" src="assets/svg/chat.svg"></ion-icon>
       <ion-label text-wrap>
         <ion-text>Languages</ion-text>
         <!-- <small><i>
               <ion-text color="medium">To Store - ssssss</ion-text>
             </i></small> -->
       </ion-label>
-      <label  slot="end">
+      <label slot="end">
         <ion-text color="medium">English</ion-text>
       </label>
     </ion-item>
     <ion-item mode="md" no-inner-end no-padding lines="full">
-      <ion-icon slot="start" src="assets/svg/send.svg"></ion-icon>
+      <ion-icon size="small" slot="start" src="assets/svg/currency.svg"></ion-icon>
       <ion-label text-wrap>
-        <ion-text>wwwww</ion-text>
+        <ion-text>Currencies</ion-text>
         <!-- <small><i>
                 <ion-text color="medium">To Store - ssssss</ion-text>
               </i></small> -->
       </ion-label>
       <label slot="end">
-        <ion-text color="medium">wwwww</ion-text>
+        <ion-text color="medium">Korea Won</ion-text>
       </label>
     </ion-item>
     <ion-item mode="md" no-inner-end no-padding lines="full">
-      <ion-icon slot="start" src="assets/svg/send.svg"></ion-icon>
+      <ion-icon size="small" slot="start" src="assets/svg/document.svg"></ion-icon>
       <ion-label text-wrap>
-        <ion-text>wwwww</ion-text>
+        <ion-text>Privacy and policy</ion-text>
+        <!-- <small><i>
+                <ion-text color="medium">To Store - ssssss</ion-text>
+              </i></small> -->
+      </ion-label>
+      <!-- <label slot="end">
+        <ion-text color="medium">wwwww</ion-text>
+      </label> -->
+    </ion-item>
+    <ion-item mode="md" no-inner-end no-padding lines="full">
+      <ion-icon size="small" slot="start" src="assets/svg/note.svg"></ion-icon>
+      <ion-label text-wrap>
+        <ion-text>About</ion-text>
         <!-- <small><i>
                   <ion-text color="medium">To Store - ssssss</ion-text>
                 </i></small> -->
       </ion-label>
-      <label slot="end">
+      <!-- <label slot="end">
         <ion-text color="medium">wwwww</ion-text>
-      </label>
+      </label> -->
+    </ion-item>
+    <ion-item mode="md" no-inner-end no-padding lines="full">
+      <ion-icon size="small" size="small" slot="start" src="assets/svg/lock.svg"></ion-icon>
+      <ion-label text-wrap>
+        <ion-text>Change password</ion-text>
+      </ion-label>
     </ion-item>
     <ion-item (click)="onLogout()" mode="md" no-inner-end no-padding lines="full">
-      <ion-icon slot="start" src="assets/svg/send.svg"></ion-icon>
+      <ion-icon size="small" slot="start" src="assets/svg/logout.svg"></ion-icon>
       <ion-label text-wrap>
         <ion-text>Logout</ion-text>
       </ion-label>
-     
     </ion-item>
   </ion-list>
 </ion-content>

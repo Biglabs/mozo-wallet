@@ -23,14 +23,14 @@ export class TransactionPage implements AfterContentInit {
 
   transactionData: any = [];
   errorMessage: string;
-  page = 1;
+  page = 0;
   perPage = 20;
 
   getTransactions(event?) {
     this.mozoService.getTransactions(this.appGlobals.address, { page: this.page, size: this.perPage }).subscribe((res: HttpResponse<any>) => {
-      let dataRes = res.body;
+      let dataRes = res.body.data.items;
       this.loading = false
-      this.transactionData = [...this.transactionData, ...res.body]
+      this.transactionData = [...this.transactionData, ...dataRes]
 
       this.page += 1
 

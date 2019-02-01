@@ -87,7 +87,7 @@ export class SendPinConfirmPage {
 
           await this.dismiss();
           setTimeout(() => {
-            electron.ipcRenderer.send("send-transaction-airdrop-callback", JSON.stringify(res.body))
+            electron.ipcRenderer.send("send-transaction-airdrop-callback", JSON.stringify(res.body.data))
           }, 200)
 
         }, (error) => {
@@ -99,7 +99,7 @@ export class SendPinConfirmPage {
 
   createTransaction(txData, privKey) {
     this.mozoService.createTransaction(txData).subscribe((res: HttpResponse<any>) => {
-      const data = res.body;
+      const data = res.body.data;
       if (data) {
         let requestData = {
           coinType: "SOLO",
@@ -113,7 +113,7 @@ export class SendPinConfirmPage {
           if (result) {
             let dataReq = JSON.parse(result);
             this.mozoService.sendSignedTransaction(dataReq).subscribe(async (res: HttpResponse<any>) => {
-              let txReq = res.body
+              let txReq = res.body.data
               
               if (txData.type === 'ex') {
                 await this.dismiss();
@@ -159,7 +159,7 @@ export class SendPinConfirmPage {
   getTransactionStatus(txHash) {
     const getTxStatus = setInterval(() => {
       this.mozoService.getTransactionStatus(txHash).subscribe((res: HttpResponse<any>) => {
-        const data = res.body;
+        const data = res.body.data;
 
         console.log("status", data)
         if (data.status === "SUCCESS") {

@@ -42,14 +42,16 @@ export class MyWalletPage implements OnInit {
 
   transactionData: any = [];
   errorMessage: string;
-  page = 1;
+  page = 0;
   perPage = 20;
 
   getTransactions(event?) {
     this.mozoService.getTransactions(this.appGlobals.address, { page: this.page, size: this.perPage}).subscribe((res: HttpResponse<any>) => {
-      let dataRes = res.body;
+      let dataRes = res.body.data.items;
       this.loading = false
-      this.transactionData = [...this.transactionData, ...res.body]
+      this.transactionData = [...this.transactionData, ...dataRes]
+
+      console.log(this.transactionData)
 
       this.page += 1
 
@@ -102,7 +104,7 @@ export class MyWalletPage implements OnInit {
     console.log("my wallet")
     this.address = this.appGlobals.address
     this.mozoService.getBalance(this.address).subscribe((res: HttpResponse<any>) => {
-      const data = res.body;
+      const data = res.body.data;
       if(data) {
         this.balance = data['balance'] / 100
       }

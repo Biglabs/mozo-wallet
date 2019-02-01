@@ -50,7 +50,7 @@ export class SendPage implements OnInit {
   ngOnInit() {
 
     this.mozoService.getAddressBook().subscribe((res: HttpResponse<any>) => {
-      const data = res.body;
+      const data = res.body.data.items;
       if (data) {
         this.options = data
         this.filteredOptions = this.formModel.controls['toAddress'].valueChanges

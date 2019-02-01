@@ -54,7 +54,7 @@ export class SaveAddressPage implements OnInit {
       soloAddress: this.formModel.value.address
     }
     this.mozoService.saveAddress(reqData).subscribe((res: HttpResponse<any>) => {
-      const data = res.body;
+      const data = res.body.data;
       if (data) {
         // this.balance = data['balance'] / 100
         //this.dismissLoading()

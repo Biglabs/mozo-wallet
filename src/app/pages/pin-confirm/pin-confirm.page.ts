@@ -72,7 +72,7 @@ export class PinConfirmPage {
             offchainAddress: address.address
           };
           this.mozoService.updateWalletInfo(repData).subscribe((res: HttpResponse<any>) => {
-            const data = res.body;
+            const data = res.body.data;
 
             console.log("user", data)
             saveAddress()

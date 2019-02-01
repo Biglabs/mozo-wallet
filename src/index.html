@@ -23,7 +23,13 @@
   <!-- <script type="text/javascript" src="assets/libs/sjcl.js"></script> -->
   <!-- Un-comment if using electron  -->
   <script>
-    const electron = require('electron') || null;
+    let electron = null
+    try {
+      electron = require('electron');
+    } catch (error) {
+      
+    }
   </script>
 </body>
+
 </html>

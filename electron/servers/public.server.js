@@ -162,9 +162,11 @@ function createServer() {
     })
     ipcMain.once("get-balance-callback", (event, arg) => {
       if (arg) {
+        let data = JSON.parse(arg)
+        data.balance = data.balance / 100
         response_data = {
           status: "SUCCESS",
-          data: JSON.parse(arg),
+          data: data,
           error: null
         };
       } else {
@@ -258,7 +260,9 @@ function createServer() {
       return;
     }
 
-    let page_num = req.query.page ? req.query.page : 1;
+    //let page_num = req.query.page ? req.query.page : 0; // will be use if mozo change page index default is 0
+
+    let page_num = req.query.page ? ((req.query.page - 1) < 0 ? 0 : req.query.page - 1) : 0;
     let size_num = req.query.size ? req.query.size : 15;
 
     let currentWindow = this.getWindow()
@@ -305,8 +309,7 @@ function createServer() {
 
   app.post('/transaction/send', (req, res, next) => {
     let tx_send_data = req.body;
-
-    console.log(tx_send_data)
+    
     // let wallet_addrs = userReference.get("Address");
     // let response_data = {
     //   status: "ERROR",
@@ -402,7 +405,7 @@ function createServer() {
       status: "ERROR",
       error: ERRORS.NO_WALLET
     };
-    
+
     store.getStoreInfo().then(function (data) {
       response_data = {
         status: "SUCCESS",

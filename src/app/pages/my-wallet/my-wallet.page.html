@@ -22,7 +22,7 @@
           <small>{{address}}</small>
         </p>
       </ion-card-header>
-      
+
     </ion-card>
     <ion-grid>
       <ion-row>
@@ -38,10 +38,10 @@
   </div>
   <loading top="75%" *ngIf="loading; else loadingComplate"></loading>
   <ng-template #loadingComplate>
-    <ion-list class="transaction-list">
+    <ion-list *ngIf="transactionData.length > 0 ; else noData" class="transaction-list">
       <ng-container *ngFor="let item of transactionData">
-        <ion-item mode="md" *ngIf="item.addressTo.toLowerCase() != address.toLowerCase(); else elseBlock" no-inner-end
-          no-padding lines="full">
+        <ion-item mode="md" *ngIf="item.addressTo.toLowerCase() != address.toLowerCase(); else elseBlock"
+          no-inner-end no-padding lines="full">
           <ion-icon size="large" slot="start" src="assets/svg/send.svg"></ion-icon>
           <ion-label color="medium" text-wrap>
             <h3>Sent</h3>
@@ -55,7 +55,7 @@
           </label>
         </ion-item>
         <ng-template #elseBlock>
-          <ion-item mode="md" *ngIf="item; else elseBlock" no-inner-end no-padding lines="full">
+          <ion-item mode="md" no-inner-end no-padding lines="full">
             <ion-icon size="large" slot="start" src="assets/svg/receive.svg"></ion-icon>
             <ion-label color="medium" text-wrap>
               <h3>Received</h3>
@@ -71,6 +71,15 @@
         </ng-template>
       </ng-container>
     </ion-list>
+    <ng-template #noData>
+      <ion-list class="transaction-list">
+        <ion-item text-center no-inner-end padding lines="none">
+          <i>
+            <ion-text padding color="medium">No history data</ion-text>
+          </i>
+        </ion-item>
+      </ion-list>
+    </ng-template>
     <ion-infinite-scroll threshold="100px" (ionInfinite)="getTransactions($event)">
       <ion-infinite-scroll-content class="custom-spinner" loadingSpinner="dots" loadingText="Loading more data...">
       </ion-infinite-scroll-content>

@@ -26,7 +26,7 @@ export class AddressBookPage {
 
   getAddressBook(event?) {
     this.mozoService.getAddressBook().subscribe((res: HttpResponse<any>) => {
-      let dataRes = res.body;
+      let dataRes = res.body.data.items;
       this.loading = false
       if (dataRes) {
         this.addressBookData = dataRes.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
