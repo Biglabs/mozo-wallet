@@ -12,11 +12,12 @@ import { SendConfirmPage } from './pages/send-confirm/send-confirm.page';
 
 // const { App } = Plugins;
 
-import { MozoService } from './services/mozo.service'
+import { MozoService, DataReponse } from './services/mozo.service'
 import { AppService } from './app.service'
 import { AppGlobals } from './app.globals'
 
 import Utils from './utils'
+import { AlertService } from './services/alert/alert.service';
 
 // import encryption from './helpers/EncryptionUtils';
 // import bip39 from 'bip39'
@@ -39,7 +40,8 @@ export class AppComponent {
     private appService: AppService,
     private appGlobals: AppGlobals,
     private router: Router,
-    public modalController: ModalController
+    public modalController: ModalController,
+    private alertService: AlertService,
   ) {
     this.initializeApp();
   }
@@ -166,8 +168,13 @@ export class AppComponent {
             })
 
             electron.ipcRenderer.on("get-transaction-status", async (event, arg) => {
-              this.mozoService.getTransactionStatus(arg.txhash).subscribe((res: HttpResponse<any>) => {
-                const data = res.body.data;
+              this.mozoService.getTransactionStatus(arg.txhash).subscribe((res: DataReponse) => {
+                if(!res.success) {
+                  console.log('Can not get hash status')
+                  console.log('arg', arg)
+                  console.log('res', res)
+                }
+                const data = res.data;
                 electron.ipcRenderer.send("get-transaction-status-callback", JSON.stringify(data))
                 console.log("get-transaction-status ", data)
 
@@ -215,6 +222,7 @@ export class AppComponent {
 
               this.appService.getSetting(['Address']).then((data) => {
                 console.log("data", data)
+
                 if (data["Address"]) {
                   this.appGlobals.address = data["Address"]["address"]
                   this.router.navigateByUrl("/app/tabs/(my-wallet:my-wallet)")
