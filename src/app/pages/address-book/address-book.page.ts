@@ -50,6 +50,13 @@ export class AddressBookPage {
     }
   }
 
+  openAddressDetail(item) {
+    console.log(item)
+    console.log(item)
+    
+    console.log(item)
+  }
+
   private filterAddressByName(value: string): [any] {
     const filterValue = value.toLowerCase();
     return this.addressBookData.filter(a => a.name.toLowerCase().includes(filterValue));

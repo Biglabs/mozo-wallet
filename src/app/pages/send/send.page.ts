@@ -2,12 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { ModalController } from '@ionic/angular';
 import { SendConfirmPage } from '../send-confirm/send-confirm.page';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { MozoService } from '../../services/mozo.service'
 import { AppGlobals } from '../../app.globals'
 import { HttpResponse } from "@angular/common/http";
+
+
+import Utils from '../../Utils'
 
 @Component({
   selector: 'send-mozo',
@@ -24,8 +27,8 @@ export class SendPage implements OnInit {
   ) { }
 
   formModel = this.fb.group({
-    toAddress: [null, Validators.required],
-    //toAddress: [null, [Validators.required, Validators.pattern('^(0x)?[0-9a-fA-F]{40}$')]],
+    // toAddress: [null, Validators.required],
+    toAddress: [null, [Validators.required, Utils.customValidator.invalidEthAddressValidator]],
     amount: [null, Validators.required]
   });
   options: any;
@@ -72,3 +75,4 @@ export class SendPage implements OnInit {
     return this.options.filter(option => option.name.toLowerCase().includes(filterValue) || option.soloAddress.includes(filterValue));
   }
 }
+

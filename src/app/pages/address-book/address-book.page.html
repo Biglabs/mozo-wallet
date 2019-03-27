@@ -29,7 +29,8 @@
           </ion-label>
         </ion-item-divider>
 
-        <ion-item-sliding *ngFor="let item of getAddressByGroup(group)">
+        <ion-item-sliding *ngFor="let item of getAddressByGroup(group)"
+          (click)="openAddressDetail(item)">
           <ion-item mode="md" no-inner-end no-padding lines="full">
             <ion-label color="dark" text-wrap>
               <h3>{{item.name}}</h3>

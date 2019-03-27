@@ -35,6 +35,9 @@ export class MyWalletPage implements OnInit {
   send() {
     this.nav.navigateForward("/send")
   }
+  openPaymentRequest() {
+    this.nav.navigateForward("/payment-request")
+  }
 
   ngAfterViewInit() {
     console.log("my wallet 2")
