@@ -26,9 +26,13 @@ form {
         .edit-button {
             color: #969696;
             font-size: 13px;
+            display: inline-flex;
+            position: relative;
+            top: 1px;
             img {
-                width: 20px;
-                margin-bottom: -4px;
+                width: 13px;
+                margin-left: 2px;
+                margin-right: 6px;
             }
         }
     }
