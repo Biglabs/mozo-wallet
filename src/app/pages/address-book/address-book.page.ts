@@ -2,6 +2,9 @@ import { Component } from '@angular/core';
 import { HttpResponse } from "@angular/common/http";
 import { MozoService } from '../../services/mozo.service'
 import { AppGlobals } from '../../app.globals'
+import { ModalController, Events } from '@ionic/angular';
+import { AddressDetailsComponent } from 'src/app/components/address-details/address-details.component';
+import { SendPinConfirmPage } from '../send-pin-confirm/send-pin-confirm.page';
 
 @Component({
   selector: 'address-book-page',
@@ -9,10 +12,17 @@ import { AppGlobals } from '../../app.globals'
   styleUrls: ['address-book.page.scss']
 })
 export class AddressBookPage {
+  static Event_Reload_Address_Book = 'reload:address-book'
   constructor(
     private mozoService: MozoService,
-    private appGlobals: AppGlobals
+    public modalController: ModalController,
+    private appGlobals: AppGlobals,
+    public events: Events,
   ) {
+    
+    this.events.subscribe(AddressBookPage.Event_Reload_Address_Book, () => {
+      this.getAddressBook()
+    });
     this.getAddressBook()
   }
   loading: boolean = true
@@ -40,6 +50,10 @@ export class AddressBookPage {
     return this.addressBookViewed.filter((a) => a.name.charAt(0).toUpperCase() == letter.toUpperCase())
   }
 
+  getOtherAddress() {
+    return this.addressBookViewed.filter((a) => !this.groups.includes(a.name.charAt(0).toUpperCase()))
+  }
+
   updateAddress() {
     if (this.queryText.trim() != "") {
       this.addressBookViewed = this.filterAddressByName(this.queryText)
@@ -50,11 +64,12 @@ export class AddressBookPage {
     }
   }
 
-  openAddressDetail(item) {
-    console.log(item)
-    console.log(item)
-    
-    console.log(item)
+  async openAddressDetail(item) {
+    const modal = await this.modalController.create({
+      component: AddressDetailsComponent,
+      componentProps: { addressDetails: item }
+    });
+    await modal.present();
   }
 
   private filterAddressByName(value: string): [any] {

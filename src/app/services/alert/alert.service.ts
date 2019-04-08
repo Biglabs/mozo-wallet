@@ -12,7 +12,7 @@ export class AlertService {
   showError(title: string = '', message: string= '', delay=0) {
     setTimeout(()=> {
       let dialogRef = this.dialog.open(AlertDialogComponent, {
-        width: "400px",
+        width: "300px",
         data: { type: "error", title: title, message: message }
       });
       dialogRef.afterClosed().subscribe(data => {

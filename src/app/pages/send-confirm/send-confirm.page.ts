@@ -14,7 +14,7 @@ export class SendConfirmPage {
   constructor(
     public modalController: ModalController,
     private appGlobals: AppGlobals,
-    public events: Events
+    public events: Events,
   ) { 
     this.toAddress = this.appGlobals.txData.to
     this.amount = this.appGlobals.txData.value

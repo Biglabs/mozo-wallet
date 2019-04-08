@@ -10,7 +10,7 @@ const routes: Routes = [
   { path: 'payment-request', loadChildren: './pages/payment-request/payment-request.module#PaymentRequestModule' },
   { path: 'pin', loadChildren: './pages/pin/pin.module#PinPageModule' },
   { path: 'pin-confirm', loadChildren: './pages/pin-confirm/pin-confirm.module#PinConfirmPageModule' },
-  { path: 'app', loadChildren: './pages/tabs/tabs.module#TabsPageModule' }
+  { path: 'app', loadChildren: './pages/tabs/tabs.module#TabsPageModule' },
 ];
 @NgModule({
   declarations: [

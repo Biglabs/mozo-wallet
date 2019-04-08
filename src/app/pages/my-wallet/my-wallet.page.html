@@ -40,17 +40,17 @@
   <ng-template #loadingComplate>
     <ion-list *ngIf="transactionData.length > 0 ; else noData" class="transaction-list">
       <ng-container *ngFor="let item of transactionData">
-        <ion-item mode="md" *ngIf="item.addressTo.toLowerCase() != address.toLowerCase(); else elseBlock"
+        <ion-item mode="md" *ngIf="item?.addressTo?.toLowerCase() != address?.toLowerCase(); else elseBlock"
           no-inner-end no-padding lines="full">
           <ion-icon size="large" slot="start" src="assets/svg/send.svg"></ion-icon>
           <ion-label color="medium" text-wrap>
             <h3>Sent</h3>
             <small><i>
-                <ion-text color="medium">To Store - {{item.time * 1000 | date:'hh:mm MMM d, y'}}</ion-text>
+                <ion-text color="medium">To Store - {{item?.time * 1000 | date:'hh:mm MMM d, y'}}</ion-text>
               </i></small>
           </ion-label>
           <label slot="end">
-            <ion-text>-{{item.amount / 100 | number}}</ion-text><br />
+            <ion-text>-{{item?.amount / 100 | number}}</ion-text><br />
             <!-- <small><i>300</i></small> -->
           </label>
         </ion-item>
@@ -60,11 +60,11 @@
             <ion-label color="medium" text-wrap>
               <h3>Received</h3>
               <small><i>
-                  <ion-text color="medium">From Store - {{item.time * 1000 | date:'hh:mm MMM d, y'}}</ion-text>
+                  <ion-text color="medium">From Store - {{item?.time * 1000 | date:'hh:mm MMM d, y'}}</ion-text>
                 </i></small>
             </ion-label>
             <label slot="end">
-              <ion-text color="primary">+{{item.amount / 100 | number}}</ion-text><br />
+              <ion-text color="primary">+{{item?.amount / 100 | number}}</ion-text><br />
               <!-- <small><i>300</i></small> -->
             </label>
           </ion-item>

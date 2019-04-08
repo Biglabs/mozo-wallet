@@ -50,7 +50,7 @@ export class MyWalletPage implements OnInit {
 
   getTransactions(event?) {
     this.mozoService.getTransactions(this.appGlobals.address, { page: this.page, size: this.perPage}).subscribe((res: HttpResponse<any>) => {
-      let dataRes = res.body.data.items;
+      let dataRes = res.body.data.items || [];
       this.loading = false
       this.transactionData = [...this.transactionData, ...dataRes]
 
@@ -105,7 +105,7 @@ export class MyWalletPage implements OnInit {
 
   ngOnInit() {
     console.log("my wallet")
-    this.address = this.appGlobals.address
+    this.address = this.appGlobals.address || ""
     this.mozoService.getBalance(this.address).subscribe((res: HttpResponse<any>) => {
       const data = res.body.data;
       if(data) {

@@ -26,26 +26,31 @@
               <input type="text" placeholder="Input address" matInput formControlName="address">
             </mat-form-field>
           </ion-list>
-          <div *ngIf="isSending" text-center>
+          <div *ngIf="isSubmitted" text-center>
               <div *ngIf="status==='pending'" item-center>
-                  <ion-icon margin-top custom-icon size="large" src="assets/svg/loading.svg"></ion-icon>
-                  <ion-label color="medium"><small size-md> &nbsp;<i>Saving</i></small></ion-label>
+                <ion-label color="medium">
+                    <ion-icon slot="start" margin-top custom-icon size="large" src="assets/svg/loading.svg"></ion-icon>
+                    <small size-md> &nbsp;<i>Saving</i></small>
+                  </ion-label>
               </div>
               <div *ngIf="status==='success'" item-center>
-                  <ion-icon margin-top custom-icon size="large" src="assets/svg/success.svg"></ion-icon>
-                  <ion-label color="medium"><small size-md> &nbsp;<i>Success</i></small></ion-label>
+                <ion-label color="medium">
+                  <ion-icon slot="start" margin-top custom-icon size="large" src="assets/svg/success.svg"></ion-icon>
+                  <small size-md> &nbsp;<i>Success</i></small>
+                </ion-label>
               </div>
               <div *ngIf="status==='fail'" item-center>
-                  <ion-icon margin-top custom-icon size="large" src="assets/svg/failed.svg"></ion-icon>
-                  <ion-label color="medium"><small size-md> &nbsp;<i>Failed</i></small></ion-label>
+                <ion-label color="medium">
+                  <ion-icon slot="start" margin-top custom-icon size="large" src="assets/svg/failed.svg"></ion-icon>
+                  <small size-md> &nbsp;<i>{{errorMessage}}</i></small>
+                </ion-label>
               </div>
-
           </div>
         </ion-col>
         <ion-col height-15 size="12" align-items-end no-padding>
           <ion-row align-items-end full-height no-padding>
             <ion-col padding-bottom>
-              <ion-button [disabled]="!formModel.valid" type="submit" align-items-end shadow expand="block">Save</ion-button>
+              <ion-button [disabled]="!formModel.valid || isSending" type="submit" align-items-end shadow expand="block">Save</ion-button>
             </ion-col>
           </ion-row>
         </ion-col>
