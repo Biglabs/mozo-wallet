@@ -9,28 +9,58 @@ import { map, catchError } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class MozoService {
-
-  constructor(private http: HttpClient) {
-  }
+  constructor(private http: HttpClient) {}
 
   getUserProfile(): Observable<HttpResponse<any>> {
-    return this.http.get<any>(`${environment.apis.solomon}/user-profile`, { observe: 'response' });
+    return this.http.get<any>(`${environment.apis.solomon}/user-profile`, {
+      observe: 'response'
+    });
   }
 
   updateWalletInfo(data): Observable<HttpResponse<any>> {
-    return this.http.put<any>(`${environment.apis.solomon}/user-profile/wallet`, data, { observe: 'response' });
+    return this.http.put<any>(
+      `${environment.apis.solomon}/user-profile/wallet`,
+      data,
+      { observe: 'response' }
+    );
   }
 
   getBalance(address): Observable<HttpResponse<any>> {
-    return this.http.get<any>(`${environment.apis.solomon}/solo/contract/solo-token/balance/${address}`, { observe: 'response' });
+    return this.http.get<any>(
+      `${environment.apis.solomon}/solo/contract/solo-token/balance/${address}`,
+      { observe: 'response' }
+    );
   }
 
   getAddressBook(): Observable<HttpResponse<any>> {
-    return this.http.get<any>(`${environment.apis.solomon}/contacts`, { observe: 'response' });
+    return this.http.get<any>(`${environment.apis.solomon}/contacts`, {
+      observe: 'response'
+    });
+  }
+
+  updateAddressBook(dto: { id; name; soloAddress }): Observable<DataReponse> {
+    return this.handleError(
+      this.http.put<DataReponse>(`${environment.apis.solomon}/contacts`, dto, {
+        observe: 'response'
+      })
+    );
+  }
+
+  removeAddressBook(id: number): Observable<DataReponse> {
+    return this.handleError(
+      this.http.delete<any>(`${environment.apis.solomon}/contacts/${id}`, {
+        observe: 'response'
+      })
+    );
   }
 
   getTransactions(address, params): Observable<HttpResponse<any>> {
-    return this.http.get<any>(`${environment.apis.solomon}/solo/contract/solo-token/txhistory/${address}`, { params : params, observe: 'response' });
+    return this.http.get<any>(
+      `${
+        environment.apis.solomon
+      }/solo/contract/solo-token/txhistory/${address}`,
+      { params: params, observe: 'response' }
+    );
   }
 
   createTransaction(data): Observable<DataReponse> {
@@ -52,38 +82,60 @@ export class MozoService {
     };
 
     return this.handleError(
-      this.http.post<any>(`${environment.apis.solomon}/solo/contract/solo-token/transfer`, reqData, { observe: 'response' })
+      this.http.post<any>(
+        `${environment.apis.solomon}/solo/contract/solo-token/transfer`,
+        reqData,
+        { observe: 'response' }
+      )
     );
-  };
+  }
 
   getBeacon(): Observable<HttpResponse<any>> {
-    return this.http.get<any>(`${environment.apis.store}/retailer/beacon`, { observe: 'response' });
+    return this.http.get<any>(`${environment.apis.store}/retailer/beacon`, {
+      observe: 'response'
+    });
   }
 
   createAirDropEvent(airdropEvent): Observable<HttpResponse<any>> {
-    return this.http.post<any>(`${environment.apis.store}/air-drops/prepare-event`, airdropEvent, { observe: 'response' });
+    return this.http.post<any>(
+      `${environment.apis.store}/air-drops/prepare-event`,
+      airdropEvent,
+      { observe: 'response' }
+    );
   }
 
   sendSignedTransactionAirdrop(data): Observable<any> {
-    return this.http.post<any>(`${environment.apis.store}/air-drops/sign`, data, { observe: 'response' })
-  };
+    return this.http.post<any>(
+      `${environment.apis.store}/air-drops/sign`,
+      data,
+      { observe: 'response' }
+    );
+  }
 
   sendSignedTransaction(data): Observable<DataReponse> {
     return this.handleError(
-      this.http.post<any>(`${environment.apis.solomon}/solo/contract/solo-token/send-signed-tx`, data, { observe: 'response' })
-      );
-  };
+      this.http.post<any>(
+        `${environment.apis.solomon}/solo/contract/solo-token/send-signed-tx`,
+        data,
+        { observe: 'response' }
+      )
+    );
+  }
 
   getTransactionStatus(txHash): Observable<DataReponse> {
     return this.handleError(
-      this.http.get<any>(`${environment.apis.solomon}/eth/solo/txs/${txHash}/status`, { observe: 'response' })
+      this.http.get<any>(
+        `${environment.apis.solomon}/eth/solo/txs/${txHash}/status`,
+        { observe: 'response' }
+      )
     );
-  };
+  }
 
   saveAddress(data): Observable<HttpResponse<any>> {
-    return this.http.post<any>(`${environment.apis.solomon}/contacts`, data, { observe: 'response' });
-  };
-
+    return this.http.post<any>(`${environment.apis.solomon}/contacts`, data, {
+      observe: 'response'
+    });
+  }
 
   // let options = common.setRequestData();
   // options.url = mozo_service_host + "/user-profile/wallet";
@@ -98,18 +150,16 @@ export class MozoService {
     try {
       return reponse.pipe(
         map(res => {
-          return ErrorParser.getParsedReponse(res)
+          return ErrorParser.getParsedReponse(res);
         }),
         catchError(res => {
           return of(ErrorParser.getParsedReponse(res));
         })
       );
-    } catch(err) {
-      return of(ErrorParser.getParsedReponse())
+    } catch (err) {
+      return of(ErrorParser.getParsedReponse());
     }
   }
-
-
 }
 
 export class ErrorParser {
@@ -171,6 +221,8 @@ export class ErrorParser {
       case "TRANSACTION_ERROR_NONCE_TOO_LOW":
       case "TRANSACTION_ERROR_SEND_TX":
         return "Something is wrong with your account status. Please try again."
+      case "SOLOMON_USER_ADDRESS_BOOK_DUPLICATE_OFFCHAIN_ADDRESS":
+        return "This address already exists in your Address Book"
       default:
         console.log("Not clarify error code: ", errorCode)
         return "Cannot connect to MozoX servers. Please contact us for more information (email + phone)"

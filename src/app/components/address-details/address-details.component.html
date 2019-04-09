@@ -1,0 +1,63 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+        <ion-button (click)="dismiss()">
+          <ion-icon name="arrow-back"></ion-icon>
+          <span class="primary-color">Back</span>
+        </ion-button>
+    </ion-buttons>
+    <ion-title text-center>
+        <app-logo></app-logo>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content padding>
+  <form full-height [(formGroup)]="formModel" (ngSubmit)="updateName()">
+    <div class="address-avatar center-image-container">
+      <img src="./assets/svg/user_icon.svg" />
+    </div>
+    <div class="address-name">
+      <input type="text" formControlName="name"
+        AutoSizeInput [extraWidth]="5" [minWidth]="10" [maxWidth]="300"
+        [readonly]="!isEditing"
+        (blur)="updateName()">
+      <a (click)="toggleEditName()" class="edit-button">
+        <img src="./assets/icon/icon-edit.svg" />
+        {{isEditing ? "Save" : "Edit"}}
+      </a>
+      <!-- <span *ngIf="isEditing" class="edit-button">
+          <ion-icon no-stroke src="assets/svg/mozo-offchain.svg"></ion-icon>Save
+      </span>
+      <span *ngIf="isEditing" (click)="toggleEditName()" class="edit-button">
+          <ion-icon no-stroke src="assets/svg/mozo-offchain.svg"></ion-icon>Cancel
+      </span> -->
+    </div>
+    <div class="address-info">
+      <div class="info-title">Wallet List:</div>
+      <div class="info-list">
+          <ion-item mode="md" lines="none" no-padding>
+            <ion-icon no-stroke src="assets/svg/mozo-offchain.svg"></ion-icon>
+            <div class="solo-address">{{addressDetails.soloAddress}}</div>
+          </ion-item>
+      </div>
+    </div>
+    
+    <a (click)="removeAddressBook()" class="button-remove">
+        <span class="icon-close">+</span> <span>Delete this address</span>
+    </a>
+  </form>
+  
+  <!-- <ion-button (click)="removeAddressBook()" class="button-remove">
+    <ion-icon is-server="true" src="assets/svg/icon-arrow-left.svg"></ion-icon> Delete this address
+  </ion-button> -->
+</ion-content>
+
+<!-- <ion-footer>
+  <ion-toolbar>
+    <ion-title>
+        <a (click)="removeAddressBook()" class="button-remove">
+            Delete this address
+          </a>
+      </ion-title>
+  </ion-toolbar>
+</ion-footer> -->

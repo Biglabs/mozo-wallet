@@ -1,0 +1,13 @@
+<div class="alert-dialog">
+  <h2 md-dialog-title *ngIf="type=='error'">{{title}}</h2>
+  <h2 md-dialog-title *ngIf="type=='warning'">{{title}}</h2>
+  <h2 md-dialog-title *ngIf="type=='success'">{{title}}</h2>
+
+  <hr>
+  <div mat-dialog-content>{{message}}</div>
+  <hr>
+
+  <div mat-dialog-actions align="center">
+      <button mat-button (click)="onCloseCancel()">{{label['Ok']}}</button>
+  </div>
+</div>

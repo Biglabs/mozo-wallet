@@ -1,0 +1,87 @@
+form {
+    padding-top: 10px;
+    .address-avatar {
+        border-radius: 50%;
+        margin: 0 auto 20px;
+        
+        width: 134px;
+        height: 134px;
+        background-color: #e4e4e4;
+    }
+    
+    .address-name {
+        text-align: center;
+        input {
+            font-weight: bold;
+            // padding: 1px 5px;
+            font-size: 20px;
+            color: #141a22;
+            &:read-only {
+                border:none;
+            }
+        }
+        ion-icon {
+            margin: 0 5px;
+        }
+        .edit-button {
+            color: #969696;
+            font-size: 13px;
+            display: inline-flex;
+            position: relative;
+            top: 1px;
+            img {
+                width: 13px;
+                margin-left: 2px;
+                margin-right: 6px;
+            }
+        }
+    }
+    
+    .address-info {
+        .info-title {
+            margin-bottom: 10px;
+            margin-top: 20px;
+
+            font-size: 15px;
+            font-weight: bold;
+        }
+        .info-list {
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+    
+            border-radius: 5px;
+            height: 60px;
+            border: 1px solid #d1d7dd;
+
+            .solo-address {
+                margin-left: 10px;
+                font-size: 12px;
+            }
+        }
+    }
+    .edit-button, .button-remove {
+        cursor: pointer;
+    }
+    .button-remove {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        
+        font-size: 15px;
+        color: #f05454;
+    }
+}
+
+
+.icon-close {
+    display: inline-block;
+
+    font-size: 26px;
+    transform: rotate(45deg);
+    color: #f05454;
+    margin-right: 5px;
+}

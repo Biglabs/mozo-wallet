@@ -197,7 +197,10 @@ async function createWindow() {
       return mainWindow
     },
     hideApp: () => {
-      app.hide()
+      try {
+        mainWindow.hide()
+        app.hide()
+      } catch(err) {}
     }
   })
 
@@ -210,10 +213,10 @@ async function createWindow() {
     webPreferences: {
       webSecurity: false
     },
-    minWidth: 375,
+    minWidth: 400,
     minHeight: 667,
-    maxWidth: 375,
-    width: 375,
+    maxWidth: 500,
+    width: 400,
     height: 730,
     show: false,
     /* width: 1024,
@@ -256,7 +259,7 @@ async function createWindow() {
   splashScreen = new CapacitorSplashScreen(mainWindow, {
     imageFileName: 'mozox.svg',
     loadingText: " ",
-    windowWidth: 375,
+    windowWidth: 400,
     windowHeight: 730,
     transparentWindow: false,
     callBackInit: () => {
@@ -351,7 +354,10 @@ app.on('open-url', function (event, url) {
   console.log("open-url", url);
   if (url.indexOf('close') >= 0) {
     console.log("close", url);
-    app.hide();
+    try {
+      mainWindow.hide()
+      app.hide()
+    } catch(err) {}
   } else {
     console.log("open", url);
     //mainWindow.loadURL(`http://localhost:${appServer.port}#sssss`);
