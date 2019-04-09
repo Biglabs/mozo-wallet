@@ -2,7 +2,7 @@ import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 import { HttpModule } from '@angular/http';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -21,14 +21,19 @@ import { AppGlobals } from './app.globals';
 import { EventStackService } from './core/services/event-stack.service';
 //import { SendConfirmPage } from './pages/send-confirm/send-confirm.page';
 import { SendConfirmPageModule } from './pages/send-confirm/send-confirm.module';
+import { AlertService } from './services/alert/alert.service';
+import { ShareModule } from './share.module';
+import { AlertDialogComponent } from './services/alert/alert-dialog/alert-dialog.component';
 
 
 @NgModule({
   declarations: [
   AppComponent,
+  AlertDialogComponent
   //SendConfirmPage
   ],
   entryComponents: [
+    AlertDialogComponent,
     //SendConfirmPage
   ],
   imports: [
@@ -36,6 +41,7 @@ import { SendConfirmPageModule } from './pages/send-confirm/send-confirm.module'
     HttpClientModule,
     HttpModule,
     IonicModule.forRoot({ mode: 'ios' }),
+    ShareModule,
     AppRoutingModule,
     SendConfirmPageModule,
     KeycloakAngularModule,
@@ -53,7 +59,8 @@ import { SendConfirmPageModule } from './pages/send-confirm/send-confirm.module'
       useFactory: initializer,
       multi: true,
       deps: [KeycloakService, EventStackService, AppService]
-    }
+    },
+    AlertService
   ],
   bootstrap: [AppComponent]
 })
