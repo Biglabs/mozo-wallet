@@ -32,10 +32,12 @@ export class MozoService {
     );
   }
 
-  getAddressBook(): Observable<HttpResponse<any>> {
-    return this.http.get<any>(`${environment.apis.solomon}/contacts`, {
-      observe: 'response'
-    });
+  getAddressBook(): Observable<DataReponse> {
+    return this.handleError(
+      this.http.get<any>(`${environment.apis.solomon}/contacts`, {
+        observe: 'response'
+      })
+    );
   }
 
   updateAddressBook(dto: { id; name; soloAddress }): Observable<DataReponse> {

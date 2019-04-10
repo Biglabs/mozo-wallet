@@ -157,8 +157,7 @@ export class AppComponent {
             })
 
             electron.ipcRenderer.on("get-addressbook", async (event, arg) => {
-              this.mozoService.getAddressBook().subscribe((res: HttpResponse<any>) => {
-                const data = res.body.data.items;
+              this.mozoService.getAddressBook().subscribe((data: DataReponse) => {
                 electron.ipcRenderer.send("get-addressbook-callback", JSON.stringify(data))
                 console.log("get-addressbook ", data)
 
