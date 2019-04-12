@@ -61,7 +61,7 @@ export class AppComponent {
       //   console.log('App state changed. Is active?', state.isActive);
       // });
       this.keycloakService.isLoggedIn().then(async (result) => {
-        console.log("result", result)
+        // console.log("result", result)
         if (!result) {
           this.onLogin()
         } else {
@@ -78,7 +78,7 @@ export class AppComponent {
 
 
           try {
-            console.log("ipcRenderer", electron.ipcRenderer)
+            // console.log("ipcRenderer", electron.ipcRenderer)
             electron.ipcRenderer.on("send-transaction", async (event, arg) => {
               arg.type = "ex" //call from external
               arg.from = this.appGlobals.address
@@ -156,16 +156,36 @@ export class AppComponent {
               })
             })
 
+            /**
+             * Address book
+             */
             electron.ipcRenderer.on("get-addressbook", async (event, arg) => {
+              console.log('---------------------------', 'component: get list address');
               this.mozoService.getAddressBook().subscribe((data: DataReponse) => {
+                console.log('---------------------------', 'component: get list address', 2);
                 electron.ipcRenderer.send("get-addressbook-callback", JSON.stringify(data))
-                console.log("get-addressbook ", data)
-
               }, (error) => {
 
               })
             })
 
+            electron.ipcRenderer.on("put-addressbook", async (event, arg) => {
+              this.mozoService.updateAddressBook(arg).subscribe((data: DataReponse) => {
+                electron.ipcRenderer.send("put-addressbook-callback", JSON.stringify(data))
+              }, (error) => {
+
+              })
+            })
+
+            electron.ipcRenderer.on("remove-addressbook", async (event, arg) => {
+              this.mozoService.removeAddressBook(arg).subscribe((data: DataReponse) => {
+                electron.ipcRenderer.send("remove-addressbook-callback", JSON.stringify(data))
+              }, (error) => {
+
+              })
+            })
+
+            /** Transaction */
             electron.ipcRenderer.on("get-transaction-status", async (event, arg) => {
               this.mozoService.getTransactionStatus(arg.txhash).subscribe((res: DataReponse) => {
                 if(!res.success) {
@@ -217,10 +237,10 @@ export class AppComponent {
             if (data["walletInfo"]) {
               this.appGlobals.saveEncryptSeedWord(data.walletInfo.encryptSeedPhrase);
 
-              console.log("user", data)
+              // console.log("user", data)
 
               this.appService.getSetting(['Address']).then((data) => {
-                console.log("data", data)
+                // console.log("data", data)
 
                 if (data["Address"]) {
                   this.appGlobals.address = data["Address"]["address"]

@@ -18,6 +18,7 @@ function createServer() {
 
   app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE');
     res.header('Access-Control-Allow-Headers',
       'Origin, X-Requested-With, Content-Type, Accept, x-total-count');
     res.header('Access-Control-Expose-Headers',
@@ -172,6 +173,8 @@ function createServer() {
 
   app.route('/address-book')
     .get((req, res, next) => {
+      
+      console.log('---------------------------', 'public.server: get list address');
       transformRequest(
         'get-addressbook',
         'get-addressbook-callback',
@@ -180,7 +183,34 @@ function createServer() {
         res,
         next
       );
+    })
+    .put((req, res, next) => {
+      
+      console.log('---------------------------');
+      
+      console.log(req);
+      console.log(res);
+      console.log('---------------------------');
+      transformRequest(
+        'put-addressbook',
+        'put-addressbook-callback',
+        this.getWindow(),
+        req.body,
+        res,
+        next
+      );
     });
+  app.delete('/address-book/:id',(req, res, next) => {
+    transformRequest(
+      'remove-addressbook',
+      'remove-addressbook-callback',
+      this.getWindow(),
+      req.params.id,
+      res,
+      next,
+    );
+  });
+
   // .post((req, res, next) => {
   //   // console.log(req.body);
   //   let data = req.body;
@@ -542,8 +572,8 @@ function createServer() {
   });
 }
 
-function transformRequest(keyStr, callbackStr, currentWindow, req, res, next) {
-  currentWindow.webContents.send(keyStr, null);
+function transformRequest(keyStr, callbackStr, currentWindow, reqData, res, next) {
+  currentWindow.webContents.send(keyStr, reqData);
   ipcMain.once(callbackStr, (event, arg) => {
     let response_data;
     
