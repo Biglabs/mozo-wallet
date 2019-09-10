@@ -1,5 +1,5 @@
+/* eslint-disable no-console */
 const express = require('express');
-const path = require('path');
 const userReference = require('electron-settings');
 const port = 33013;
 const {
@@ -7,30 +7,22 @@ const {
 } = require('../utils/constants');
 const {
   ipcMain,
-  remote
 } = require('electron');
 
-const store = require("./_store")
+const store = require('./_store');
 
 function createServer() {
 
-  const app = express()
-  console.log(app)
-
-  function resData(status = 200, message = null) {
-    return {
-      status: status,
-      data: this,
-      message: message
-    }
-  }
+  const app = express();
+  console.log(app);
 
   app.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept, x-total-count");
-    res.header("Access-Control-Expose-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept, x-total-count");
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE');
+    res.header('Access-Control-Allow-Headers',
+      'Origin, X-Requested-With, Content-Type, Accept, x-total-count');
+    res.header('Access-Control-Expose-Headers',
+      'Origin, X-Requested-With, Content-Type, Accept, x-total-count');
     next();
   });
 
@@ -74,16 +66,16 @@ function createServer() {
 
   app.get('/checkWallet', (req, res, next) => {
     let response_data = {
-      status: "ERROR",
+      status: 'ERROR',
       error: ERRORS.NO_WALLET
-    }
+    };
 
-    let wallet = userReference.get("Address");
+    let wallet = userReference.get('Address');
     //let is_new_wallet = userReference.get(CONSTANTS.IS_NEW_WALLET_KEY);
     //if (!is_new_wallet && wallet) {
     if (wallet) {
       response_data = {
-        status: "SUCCESS",
+        status: 'SUCCESS',
         data: null,
         error: null
       };
@@ -94,9 +86,9 @@ function createServer() {
   });
 
   app.get('/getWalletAddress', (req, res, next) => {
-    let wallet = userReference.get("Address");
+    let wallet = userReference.get('Address');
     let response_data = {
-      status: "ERROR",
+      status: 'ERROR',
       error: ERRORS.NO_WALLET
     };
 
@@ -128,7 +120,7 @@ function createServer() {
 
     // console.log(JSON.stringify(wallet_arr));
     response_data = {
-      status: "SUCCESS",
+      status: 'SUCCESS',
       data: {
         network: wallet.network,
         address: wallet.address,
@@ -142,7 +134,7 @@ function createServer() {
 
   app.get('/getWalletBalance', (req, res, next) => {
     let response_data = {
-      status: "ERROR",
+      status: 'ERROR',
       error: ERRORS.NO_WALLET
     };
 
@@ -155,17 +147,17 @@ function createServer() {
       return;
     }
 
-    let currentWindow = this.getWindow()
+    let currentWindow = this.getWindow();
     // let balance_info = common.getWalletBalance(addr_network);
-    currentWindow.webContents.send("get-balance", {
+    currentWindow.webContents.send('get-balance', {
       network: addr_network
-    })
-    ipcMain.once("get-balance-callback", (event, arg) => {
+    });
+    ipcMain.once('get-balance-callback', (event, arg) => {
       if (arg) {
-        let data = JSON.parse(arg)
-        data.balance = data.balance / 100
+        let data = JSON.parse(arg);
+        data.balance = data.balance / 100;
         response_data = {
-          status: "SUCCESS",
+          status: 'SUCCESS',
           data: data,
           error: null
         };
@@ -175,31 +167,50 @@ function createServer() {
       res.send({
         result: response_data
       });
-    })
+    });
 
   });
 
   app.route('/address-book')
     .get((req, res, next) => {
-
-      let currentWindow = this.getWindow()
-      currentWindow.webContents.send("get-addressbook", null)
-      ipcMain.once("get-addressbook-callback", (event, arg) => {
-        let response_data = {
-          status: "SUCCESS",
-          data: null,
-          error: null
-        };
-        if (arg) {
-          response_data.data = JSON.parse(arg)
-        } else {
-          response_data.error = ERRORS.INTERNAL_ERROR;
-        }
-        res.send({
-          result: response_data
-        });
-      })
+      
+      console.log('---------------------------', 'public.server: get list address');
+      transformRequest(
+        'get-addressbook',
+        'get-addressbook-callback',
+        this.getWindow(),
+        req,
+        res,
+        next
+      );
     })
+    .put((req, res, next) => {
+      
+      console.log('---------------------------');
+      
+      console.log(req);
+      console.log(res);
+      console.log('---------------------------');
+      transformRequest(
+        'put-addressbook',
+        'put-addressbook-callback',
+        this.getWindow(),
+        req.body,
+        res,
+        next
+      );
+    });
+  app.delete('/address-book/:id',(req, res, next) => {
+    transformRequest(
+      'remove-addressbook',
+      'remove-addressbook-callback',
+      this.getWindow(),
+      req.params.id,
+      res,
+      next,
+    );
+  });
+
   // .post((req, res, next) => {
   //   // console.log(req.body);
   //   let data = req.body;
@@ -247,7 +258,7 @@ function createServer() {
 
   app.get('/getTxHistory', (req, res, next) => {
     let response_data = {
-      status: "ERROR",
+      status: 'ERROR',
       error: ERRORS.NO_WALLET
     };
 
@@ -265,16 +276,16 @@ function createServer() {
     let page_num = req.query.page ? ((req.query.page - 1) < 0 ? 0 : req.query.page - 1) : 0;
     let size_num = req.query.size ? req.query.size : 15;
 
-    let currentWindow = this.getWindow()
-    currentWindow.webContents.send("get-transaction-history", {
+    let currentWindow = this.getWindow();
+    currentWindow.webContents.send('get-transaction-history', {
       page: page_num,
       size: size_num
-    })
+    });
 
-    ipcMain.once("get-transaction-history-callback", (event, arg) => {
+    ipcMain.once('get-transaction-history-callback', (event, arg) => {
       res.send({
         result: {
-          status: "SUCCESS",
+          status: 'SUCCESS',
           data: JSON.parse(arg),
           error: null
         }
@@ -347,28 +358,28 @@ function createServer() {
     //     result: response_data
     //   });
     // }); 
-    let currentWindow = this.getWindow()
+    let currentWindow = this.getWindow();
 
-    currentWindow.show()
-    currentWindow.focus()
-    currentWindow.webContents.send("send-transaction", tx_send_data)
+    currentWindow.show();
+    currentWindow.focus();
+    currentWindow.webContents.send('send-transaction', tx_send_data);
 
-    ipcMain.once("send-transaction-callback", (event, arg) => {
+    ipcMain.once('send-transaction-callback', (event, arg) => {
       res.send({
         result: {
-          status: "SUCCESS",
+          status: 'SUCCESS',
           data: JSON.parse(arg),
           error: null
         }
       });
-      this.hideApp()
-    })
+      this.hideApp();
+    });
   });
 
   app.get('/transaction/txstatus', (req, res, next) => {
     let txhash = req.query.txhash;
     let response_data = {
-      status: "ERROR",
+      status: 'ERROR',
       error: ERRORS.INVALID_REQUEST
     };
 
@@ -379,15 +390,15 @@ function createServer() {
       return;
     }
 
-    let currentWindow = this.getWindow()
-    currentWindow.webContents.send("get-transaction-status", {
+    let currentWindow = this.getWindow();
+    currentWindow.webContents.send('get-transaction-status', {
       txhash: txhash
-    })
+    });
 
-    ipcMain.once("get-transaction-status-callback", (event, arg) => {
+    ipcMain.once('get-transaction-status-callback', (event, arg) => {
       res.send({
         result: {
-          status: "SUCCESS",
+          status: 'SUCCESS',
           data: JSON.parse(arg),
           error: null
         }
@@ -402,13 +413,13 @@ function createServer() {
 
   app.get('/store/info', (req, res, next) => {
     let response_data = {
-      status: "ERROR",
+      status: 'ERROR',
       error: ERRORS.NO_WALLET
     };
 
     store.getStoreInfo().then(function (data) {
       response_data = {
-        status: "SUCCESS",
+        status: 'SUCCESS',
         data: data,
         error: null
       };
@@ -425,12 +436,12 @@ function createServer() {
 
   app.get('/store/beacon', (req, res, next) => {
     let response_data = {
-      status: "ERROR",
+      status: 'ERROR',
       error: ERRORS.NO_WALLET
     };
     store.beacon.get().then(function (data) {
       response_data = {
-        status: "SUCCESS",
+        status: 'SUCCESS',
         data: data,
         error: null
       };
@@ -449,7 +460,7 @@ function createServer() {
     let event_data = req.body;
     event_data.stayIn = 0;
 
-    console.log("event_data", event_data)
+    console.log('event_data', event_data);
 
     /*
     {
@@ -473,27 +484,27 @@ function createServer() {
     //   error: ERRORS.INTERNAL_ERROR
     // };
 
-    let currentWindow = this.getWindow()
+    let currentWindow = this.getWindow();
 
-    currentWindow.show()
-    currentWindow.focus()
-    currentWindow.webContents.send("send-transaction-airdrop", event_data)
+    currentWindow.show();
+    currentWindow.focus();
+    currentWindow.webContents.send('send-transaction-airdrop', event_data);
 
-    ipcMain.once("send-transaction-airdrop-callback", (event, arg) => {
+    ipcMain.once('send-transaction-airdrop-callback', (event, arg) => {
       res.send({
         result: {
-          status: "SUCCESS",
+          status: 'SUCCESS',
           data: JSON.parse(arg),
           error: null
         }
       });
-      this.hideApp()
-    })
-  })
+      this.hideApp();
+    });
+  });
 
   app.get('/store/air-drop', (req, res, next) => {
     let response_data = {
-      status: "ERROR",
+      status: 'ERROR',
       data: null,
       error: ERRORS.INTERNAL_ERROR
     };
@@ -501,11 +512,11 @@ function createServer() {
     let request_data = req.query;
     //log.debug(request_data);
 
-    console.log("request_data", store)
+    console.log('request_data', store);
 
     store.airdrop.get(request_data).then(function (info) {
       response_data = {
-        status: "SUCCESS",
+        status: 'SUCCESS',
         data: info.data,
         error: null
       };
@@ -517,7 +528,7 @@ function createServer() {
         result: response_data
       });
     }, function (err) {
-      response_data.error = err
+      response_data.error = err;
       res.send({
         result: response_data
       });
@@ -528,7 +539,7 @@ function createServer() {
   app.get('/store/check_airdrop_status', (req, res, next) => {
     let txhash = req.query.txhash;
     let response_data = {
-      status: "ERROR",
+      status: 'ERROR',
       error: ERRORS.INVALID_REQUEST
     };
 
@@ -541,7 +552,7 @@ function createServer() {
 
     store.checkSmartContractHash(txhash).then(function (data) {
       response_data = {
-        status: "SUCCESS",
+        status: 'SUCCESS',
         data: data,
         error: null
       };
@@ -557,10 +568,28 @@ function createServer() {
   });
 
   app.listen(port, 'localhost', () => {
-    console.log("Public Server started")
-  })
+    console.log('Public Server started');
+  });
+}
+
+function transformRequest(keyStr, callbackStr, currentWindow, reqData, res, next) {
+  currentWindow.webContents.send(keyStr, reqData);
+  ipcMain.once(callbackStr, (event, arg) => {
+    let response_data;
+    
+    if (arg) {
+      response_data = JSON.parse(arg);
+    } else {
+      response_data = {
+        success: false,
+        data: null,
+        error: null
+      };
+    }
+    res.send(response_data);
+  });
 }
 
 module.exports = {
   start: createServer
-}
+};

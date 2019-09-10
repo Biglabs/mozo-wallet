@@ -21,7 +21,7 @@ export class MyWalletPage implements OnInit {
     private appGlobals: AppGlobals,
     public modalController: ModalController
   ) {
-    console.log("my wallet 3")
+    // console.log("my wallet 3")
   }
 
   async openSendConfirm() {
@@ -40,7 +40,7 @@ export class MyWalletPage implements OnInit {
   }
 
   ngAfterViewInit() {
-    console.log("my wallet 2")
+    // console.log("my wallet 2")
   }
 
   transactionData: any = [];
@@ -54,7 +54,7 @@ export class MyWalletPage implements OnInit {
       this.loading = false
       this.transactionData = [...this.transactionData, ...dataRes]
 
-      console.log(this.transactionData)
+      // console.log(this.transactionData)
 
       this.page += 1
 
@@ -104,7 +104,7 @@ export class MyWalletPage implements OnInit {
   }
 
   ngOnInit() {
-    console.log("my wallet")
+    // console.log("my wallet")
     this.address = this.appGlobals.address || ""
     this.mozoService.getBalance(this.address).subscribe((res: HttpResponse<any>) => {
       const data = res.body.data;
@@ -112,7 +112,7 @@ export class MyWalletPage implements OnInit {
         this.balance = data['balance'] / 100
       }
       
-      console.log("data balance ", data)
+      // console.log("data balance ", data)
 
     }, (error) => {
        

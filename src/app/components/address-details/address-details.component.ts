@@ -69,19 +69,19 @@ export class AddressDetailsComponent implements OnInit, OnChanges {
     if (this.addressDetails.name == newName) {
       return
     }
-    this.addressDetails.name = newName
-
+    
     this.mozoService.updateAddressBook(this.formModel.value).subscribe(
       res => {
         console.log(res);
         if(res.success) {
+          this.addressDetails.name = newName
           this.reloadAddressBook()
         } else {
-          this.notiService.open(res.error)
+          this.handleUpdateFail(res.error)
         }
       },
       error => {
-        this.notiService.open('Update address book fail')
+        this.handleUpdateFail('Update address book fail')
         console.log(error);
       }
     );
@@ -93,13 +93,13 @@ export class AddressDetailsComponent implements OnInit, OnChanges {
         if(res.success) {
           this.reloadAddressBook()
         } else {
-          this.notiService.open(res.error)
+          this.handleUpdateFail(res.error)
         }
         this.reloadAddressBook()
         this.dismiss()
       },
       error => {
-        this.notiService.open('Update address book fail')
+        this.handleUpdateFail('Update address book fail')
         console.log(error);
       }
     );
@@ -111,7 +111,12 @@ export class AddressDetailsComponent implements OnInit, OnChanges {
   }
 
   reloadAddressBook() {
-    this.notiService.open('Update address book success')
+    this.handleUpdateFail('Update address book success')
     this.events.publish(AddressBookPage.Event_Reload_Address_Book);
+  }
+  
+  private handleUpdateFail(errorMessage) {
+    this.notiService.open(errorMessage);
+    this.formModel.setValue(this.addressDetails);
   }
 }

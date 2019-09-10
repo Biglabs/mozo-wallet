@@ -5,7 +5,7 @@ import { SendConfirmPage } from '../send-confirm/send-confirm.page';
 import { FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { MozoService } from '../../services/mozo.service'
+import { MozoService, DataReponse } from '../../services/mozo.service'
 import { AppGlobals } from '../../app.globals'
 import { HttpResponse } from "@angular/common/http";
 
@@ -52,8 +52,8 @@ export class SendPage implements OnInit {
 
   ngOnInit() {
 
-    this.mozoService.getAddressBook().subscribe((res: HttpResponse<any>) => {
-      const data = res.body.data.items;
+    this.mozoService.getAddressBook().subscribe((res: DataReponse) => {
+      const data = res.data.items;
       if (data) {
         this.options = data
         this.filteredOptions = this.formModel.controls['toAddress'].valueChanges
