@@ -1,9 +1,9 @@
 import { Component, OnInit, AfterViewInit} from '@angular/core';
 import { NavController, ModalController } from '@ionic/angular';
-import { HttpResponse } from "@angular/common/http";
+import { HttpResponse } from '@angular/common/http';
 import { SendConfirmPage } from '../send-confirm/send-confirm.page';
-import { MozoService } from '../../services/mozo.service'
-import { AppGlobals } from '../../app.globals'
+import { MozoService } from '../../services/mozo.service';
+import { AppGlobals } from '../../app.globals';
 
 @Component({
   selector: 'app-my-wallet',
@@ -11,18 +11,23 @@ import { AppGlobals } from '../../app.globals'
   styleUrls: ['my-wallet.page.scss']
 })
 export class MyWalletPage implements OnInit {
-  address: string = null
-  balance: number = 0
-  loading: boolean = true
-  
+
   constructor(
     private nav: NavController,
     private mozoService: MozoService,
     private appGlobals: AppGlobals,
     public modalController: ModalController
   ) {
-    console.log("my wallet 3")
+    console.log('my wallet 3');
   }
+  address: string = null;
+  balance = 0;
+  loading = true;
+
+  transactionData: any = [];
+  errorMessage: string;
+  page = 0;
+  perPage = 20;
 
   async openSendConfirm() {
     const modal = await this.modalController.create({
@@ -33,30 +38,26 @@ export class MyWalletPage implements OnInit {
   }
 
   send() {
-    this.nav.navigateForward("/send")
+    this.nav.navigateForward('/send');
   }
   openPaymentRequest() {
-    this.nav.navigateForward("/payment-request")
+    this.nav.navigateForward('/payment-request');
   }
 
   ngAfterViewInit() {
-    console.log("my wallet 2")
+    console.log('my wallet 2');
   }
 
-  transactionData: any = [];
-  errorMessage: string;
-  page = 0;
-  perPage = 20;
-
   getTransactions(event?) {
-    this.mozoService.getTransactions(this.appGlobals.address, { page: this.page, size: this.perPage}).subscribe((res: HttpResponse<any>) => {
-      let dataRes = res.body.data.items || [];
-      this.loading = false
-      this.transactionData = [...this.transactionData, ...dataRes]
+    this.mozoService.getTransactions(this.appGlobals.address,
+      { page: this.page, size: this.perPage}).subscribe((res: HttpResponse<any>) => {
+      const dataRes = res.body.data.items || [];
+      this.loading = false;
+      this.transactionData = [...this.transactionData, ...dataRes];
 
-      console.log(this.transactionData)
+      console.log(this.transactionData);
 
-      this.page += 1
+      this.page += 1;
 
       event && event.target.complete();
 
@@ -104,20 +105,20 @@ export class MyWalletPage implements OnInit {
   }
 
   ngOnInit() {
-    console.log("my wallet")
-    this.address = this.appGlobals.address || ""
+    console.log('my wallet');
+    this.address = this.appGlobals.address || '';
     this.mozoService.getBalance(this.address).subscribe((res: HttpResponse<any>) => {
       const data = res.body.data;
-      if(data) {
-        this.balance = data['balance'] / 100
+      if (data) {
+        this.balance = data['balance'] / 100;
       }
-      
-      console.log("data balance ", data)
+
+      console.log('data balance ', data);
 
     }, (error) => {
-       
-    })
 
-    this.getTransactions()
+    });
+
+    this.getTransactions();
   }
 }

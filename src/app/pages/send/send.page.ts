@@ -5,12 +5,12 @@ import { SendConfirmPage } from '../send-confirm/send-confirm.page';
 import { FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { MozoService } from '../../services/mozo.service'
-import { AppGlobals } from '../../app.globals'
-import { HttpResponse } from "@angular/common/http";
+import { MozoService } from '../../services/mozo.service';
+import { AppGlobals } from '../../app.globals';
+import { HttpResponse } from '@angular/common/http';
 
 
-import Utils from '../../Utils'
+import Utils from '../../Utils';
 
 @Component({
   selector: 'send-mozo',
@@ -33,13 +33,15 @@ export class SendPage implements OnInit {
   });
   options: any;
 
+  filteredOptions: Observable<[any]>;
+
   async onSubmit() {
-    const formValues = this.formModel.value
+    const formValues = this.formModel.value;
     this.appGlobals.txData = {
       'from': this.appGlobals.address,
       'to': formValues.toAddress,
       'value': parseInt(formValues.amount),
-      'network': "SOLO"
+      'network': 'SOLO'
     };
     const modal = await this.modalController.create({
       component: SendConfirmPage,
@@ -48,14 +50,12 @@ export class SendPage implements OnInit {
     return await modal.present();
   }
 
-  filteredOptions: Observable<[any]>;
-
   ngOnInit() {
 
     this.mozoService.getAddressBook().subscribe((res: HttpResponse<any>) => {
       const data = res.body.data.items;
       if (data) {
-        this.options = data
+        this.options = data;
         this.filteredOptions = this.formModel.controls['toAddress'].valueChanges
           .pipe(
             startWith(''),
@@ -63,11 +63,11 @@ export class SendPage implements OnInit {
           );
       }
 
-      console.log("data address book ", data)
+      console.log('data address book ', data);
 
     }, (error) => {
 
-    })
+    });
   }
 
   private filter(value: string): [any] {

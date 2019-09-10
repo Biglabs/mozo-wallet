@@ -1,3 +1,22 @@
-<p>
-  payment-request works!
-</p>
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text="Back"></ion-back-button>
+    </ion-buttons>
+    <ion-title text-center>
+      <app-logo></app-logo>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content padding>
+  <ion-tabs>
+    <ion-tab-bar slot="top">
+      <ion-tab-button tab="account">
+        Requested List
+      </ion-tab-button>
+      <ion-tab-button tab="contact">
+        Create Request
+      </ion-tab-button>
+    </ion-tab-bar>
+  </ion-tabs>
+</ion-content>

@@ -80,7 +80,9 @@ const {
   app,
   BrowserWindow,
   Menu,
-  protocol
+  protocol,
+  globalShortcut,
+  getCurrentWindow,
 } = require('electron');
 const isDevMode = require('electron-is-dev');
 const {
@@ -190,7 +192,10 @@ function handleDeepLinkURL(url) {
 
 
 async function createWindow() {
-
+  
+	globalShortcut.register('f5', function() {
+        mainWindow.reload();
+	})
   appServer.start()
   publicServer.start.call({
     getWindow: () => {
@@ -335,6 +340,7 @@ app.setAsDefaultProtocolClient(PROTOCOL_PREFIX);
 // initialization and is ready to create browser windows.
 // Some Electron APIs can only be used after this event occurs.
 app.on('ready', () => {
+  
   createWindow();
   if (process.argv.length > 1) {
     for (var index = 1; index < process.argv.length; ++index) {

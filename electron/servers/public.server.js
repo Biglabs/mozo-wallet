@@ -161,8 +161,8 @@ function createServer() {
       network: addr_network
     })
     ipcMain.once("get-balance-callback", (event, arg) => {
-      if (arg) {
-        let data = JSON.parse(arg)
+      let data = JSON.parse(arg)
+      if (data) {
         data.balance = data.balance / 100
         response_data = {
           status: "SUCCESS",
