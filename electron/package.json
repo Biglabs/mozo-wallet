@@ -4,7 +4,7 @@
   "description": "Mozo X wallet desktop App",
   "main": "index.js",
   "scripts": {
-    "electron:start": "electron ./",
+    "start": "electron ./",
     "build:mac": "build --mac",
     "build:linux": "build --linux",
     "build:win": "build --win",

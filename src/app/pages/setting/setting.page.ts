@@ -17,7 +17,6 @@ export class SettingPage {
   
   onLogout(): void {
     this.appService.deleteSetting(['token', 'refreshToken', 'Address']).then((data) => {
-      console.log(data)
       this.keycloakService.logout(window.location.origin);
     }, (error) => {
       console.log(error)

@@ -127,6 +127,7 @@ export class Transaction {
         try {
             var validateTx = txData.params;
             //var network = txData.network;
+            console.log('Bitcoin', Bitcoin)
             const net = Bitcoin.networks.testnet;
             // signing each of the hex-encoded string required to finalize the transaction
             validateTx.pubkeys = [];

@@ -89,10 +89,10 @@ const {
   CapacitorSplashScreen
 } = require('./capacitor-custom.js');
 
-let appServer = require('./servers/app.server')
-let publicServer = require('./servers/public.server')
+let appServer = require('./servers/app.server');
+let publicServer = require('./servers/public.server');
 
-const PROTOCOL_PREFIX = 'solosigner'
+const PROTOCOL_PREFIX = 'solosigner';
 
 // Place holders for our windows so they don't get garbage collected.
 let mainWindow = null;
@@ -193,21 +193,21 @@ function handleDeepLinkURL(url) {
 
 async function createWindow() {
   
-	globalShortcut.register('f5', function() {
-        mainWindow.reload();
-	})
-  appServer.start()
+	// globalShortcut.register('f5', function() {
+  //       mainWindow.reload();
+	// });
+  appServer.start();
   publicServer.start.call({
     getWindow: () => {
-      return mainWindow
+      return mainWindow;
     },
     hideApp: () => {
       try {
-        mainWindow.hide()
-        app.hide()
+        mainWindow.hide();
+        app.hide();
       } catch(err) {}
     }
-  })
+  });
 
   // userDataPath = (app || electron.remote.app).getPath('userData');
 
@@ -216,7 +216,8 @@ async function createWindow() {
 
   mainWindow = new BrowserWindow({
     webPreferences: {
-      webSecurity: false
+      nodeIntegration: true,
+      // webSecurity: !isDevMode
     },
     minWidth: 400,
     minHeight: 667,
@@ -361,18 +362,18 @@ app.on('open-url', function (event, url) {
   if (url.indexOf('close') >= 0) {
     console.log("close", url);
     try {
-      mainWindow.hide()
-      app.hide()
+      mainWindow.hide();
+      app.hide();
     } catch(err) {}
   } else {
     console.log("open", url);
     //mainWindow.loadURL(`http://localhost:${appServer.port}#sssss`);
-    mainWindow.webContents.send("test_channel", "ping")
-    mainWindow.show()
+    mainWindow.webContents.send("test_channel", "ping");
+    mainWindow.show();
     mainWindow.focus();
   }
   // console.log("in open-url handler........");
-})
+});
 
 
 // Quit when all windows are closed.

@@ -18,7 +18,6 @@ export class MyWalletPage implements OnInit {
     private appGlobals: AppGlobals,
     public modalController: ModalController
   ) {
-    console.log('my wallet 3');
   }
   address: string = null;
   balance = 0;
@@ -45,7 +44,6 @@ export class MyWalletPage implements OnInit {
   }
 
   ngAfterViewInit() {
-    console.log('my wallet 2');
   }
 
   getTransactions(event?) {
@@ -105,7 +103,6 @@ export class MyWalletPage implements OnInit {
   }
 
   ngOnInit() {
-    console.log('my wallet');
     this.address = this.appGlobals.address || '';
     this.mozoService.getBalance(this.address).subscribe((res: HttpResponse<any>) => {
       const data = res.body.data;
