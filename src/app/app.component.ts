@@ -166,17 +166,33 @@ export class AppComponent {
             });
 
             this.ipcRenderer.on('get-addressbook', async (event, arg) => {
-              this.mozoService.getAddressBook().subscribe((res: HttpResponse<any>) => {
-                const data = res.body.data.items;
+              console.log('---------------------------', 'component: get list address');
+              this.mozoService.getAddressBook().subscribe((data: DataReponse) => {
+                console.log('---------------------------', 'component: get list address', 2);
                 this.ipcRenderer.send('get-addressbook-callback', JSON.stringify(data));
                 console.log('get-addressbook ', data);
 
+              })
+            })
+
+            electron.ipcRenderer.on("put-addressbook", async (event, arg) => {
+              this.mozoService.updateAddressBook(arg).subscribe((data: DataReponse) => {
+                electron.ipcRenderer.send("put-addressbook-callback", JSON.stringify(data))
               }, (error) => {
 
               });
             });
 
-            this.ipcRenderer.on('get-transaction-status', async (event, arg) => {
+            electron.ipcRenderer.on("remove-addressbook", async (event, arg) => {
+              this.mozoService.removeAddressBook(arg).subscribe((data: DataReponse) => {
+                electron.ipcRenderer.send("remove-addressbook-callback", JSON.stringify(data))
+              }, (error) => {
+
+              })
+            })
+
+            /** Transaction */
+            electron.ipcRenderer.on("get-transaction-status", async (event, arg) => {
               this.mozoService.getTransactionStatus(arg.txhash).subscribe((res: DataReponse) => {
                 if (!res.success) {
                   console.log('Can not get hash status');
@@ -230,10 +246,10 @@ export class AppComponent {
             if (data['walletInfo']) {
               this.appGlobals.saveEncryptSeedWord(data.walletInfo.encryptSeedPhrase);
 
-              console.log('user', data);
+              // console.log("user", data)
 
               this.appService.getSetting(['Address']).then((data) => {
-                console.log('data', data);
+                // console.log("data", data)
 
                 if (data['Address']) {
                   this.appGlobals.address = data['Address']['address'];

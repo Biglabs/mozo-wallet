@@ -53,7 +53,7 @@ export class MyWalletPage implements OnInit {
       this.loading = false;
       this.transactionData = [...this.transactionData, ...dataRes];
 
-      console.log(this.transactionData);
+      // console.log(this.transactionData)
 
       this.page += 1;
 

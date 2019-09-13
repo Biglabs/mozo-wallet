@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { HttpResponse } from "@angular/common/http";
-import { MozoService } from '../../services/mozo.service'
+import { MozoService, DataReponse } from '../../services/mozo.service'
 import { AppGlobals } from '../../app.globals'
 import { ModalController, Events } from '@ionic/angular';
 import { AddressDetailsComponent } from 'src/app/components/address-details/address-details.component';
@@ -35,8 +35,8 @@ export class AddressBookPage {
   groupViewed = this.groups
 
   getAddressBook(event?) {
-    this.mozoService.getAddressBook().subscribe((res: HttpResponse<any>) => {
-      let dataRes = res.body.data.items;
+    this.mozoService.getAddressBook().subscribe((res: DataReponse) => {
+      let dataRes = res.data ? res.data.items : [];
       this.loading = false
       if (dataRes) {
         this.addressBookData = dataRes.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
