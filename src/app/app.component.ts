@@ -175,24 +175,24 @@ export class AppComponent {
               })
             })
 
-            electron.ipcRenderer.on("put-addressbook", async (event, arg) => {
+            this.ipcRenderer.on("put-addressbook", async (event, arg) => {
               this.mozoService.updateAddressBook(arg).subscribe((data: DataReponse) => {
-                electron.ipcRenderer.send("put-addressbook-callback", JSON.stringify(data))
+                this.ipcRenderer.send("put-addressbook-callback", JSON.stringify(data))
               }, (error) => {
 
               });
             });
 
-            electron.ipcRenderer.on("remove-addressbook", async (event, arg) => {
+            this.ipcRenderer.on("remove-addressbook", async (event, arg) => {
               this.mozoService.removeAddressBook(arg).subscribe((data: DataReponse) => {
-                electron.ipcRenderer.send("remove-addressbook-callback", JSON.stringify(data))
+                this.ipcRenderer.send("remove-addressbook-callback", JSON.stringify(data))
               }, (error) => {
 
               })
             })
 
             /** Transaction */
-            electron.ipcRenderer.on("get-transaction-status", async (event, arg) => {
+            this.ipcRenderer.on("get-transaction-status", async (event, arg) => {
               this.mozoService.getTransactionStatus(arg.txhash).subscribe((res: DataReponse) => {
                 if (!res.success) {
                   console.log('Can not get hash status');
