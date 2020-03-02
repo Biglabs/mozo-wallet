@@ -19,7 +19,7 @@ import { CoreModule } from './core/core.module';
 import { AppService } from './app.service';
 import { AppGlobals } from './app.globals';
 import { EventStackService } from './core/services/event-stack.service';
-//import { SendConfirmPage } from './pages/send-confirm/send-confirm.page';
+// import { SendConfirmPage } from './pages/send-confirm/send-confirm.page';
 import { SendConfirmPageModule } from './pages/send-confirm/send-confirm.module';
 import { AlertService } from './services/alert/alert.service';
 import { ShareModule } from './share.module';
@@ -28,13 +28,13 @@ import { AlertDialogComponent } from './services/alert/alert-dialog/alert-dialog
 
 @NgModule({
   declarations: [
-  AppComponent,
-  AlertDialogComponent
-  //SendConfirmPage
+    AppComponent,
+    AlertDialogComponent
+    // SendConfirmPage
   ],
   entryComponents: [
     AlertDialogComponent,
-    //SendConfirmPage
+    // SendConfirmPage
   ],
   imports: [
     BrowserModule,

@@ -22,7 +22,7 @@ export class AddressDetailsComponent implements OnInit, OnChanges {
 
   formModel;
   isEditing = false;
-  willUpdate = false
+  willUpdate = false;
 
   constructor(
     public modalController: ModalController,
@@ -50,8 +50,8 @@ export class AddressDetailsComponent implements OnInit, OnChanges {
   }
 
   toggleEditName() {
-    console.log("toggleEditName")
-    if(this.willUpdate) {
+    console.log('toggleEditName');
+    if (this.willUpdate) {
       this.willUpdate = false;
       return;
     }
@@ -59,17 +59,18 @@ export class AddressDetailsComponent implements OnInit, OnChanges {
   }
 
   updateName() {
-    console.log("updateName")
-    if(!this.isEditing) {
-      return
+    console.log('updateName');
+    if (!this.isEditing) {
+      return;
     }
-    this.willUpdate = true
+    this.willUpdate = true;
     this.isEditing = false;
-    let newName = this.formModel.value.name
+    const newName = this.formModel.value.name;
     if (this.addressDetails.name == newName) {
-      return
+      return;
     }
-    
+    this.addressDetails.name = newName;
+
     this.mozoService.updateAddressBook(this.formModel.value).subscribe(
       res => {
         console.log(res);
@@ -90,13 +91,13 @@ export class AddressDetailsComponent implements OnInit, OnChanges {
   removeAddressBook() {
     this.mozoService.removeAddressBook(this.addressDetails.id).subscribe(
       res => {
-        if(res.success) {
-          this.reloadAddressBook()
+        if (res.success) {
+          this.reloadAddressBook();
         } else {
           this.handleUpdateFail(res.error)
         }
-        this.reloadAddressBook()
-        this.dismiss()
+        this.reloadAddressBook();
+        this.dismiss();
       },
       error => {
         this.handleUpdateFail('Update address book fail')
@@ -106,7 +107,7 @@ export class AddressDetailsComponent implements OnInit, OnChanges {
   }
 
   dismiss() {
-    let data = {};
+    const data = {};
     this.modalController.dismiss(data);
   }
 
